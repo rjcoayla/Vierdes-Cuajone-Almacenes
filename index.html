@@ -413,7 +413,32 @@
     line-height: 1;
   }
 
-  /* ── SEARCH / FILTER ── */
+  .toolbar-almacen {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+  }
+
+  .toolbar-almacen .toolbar-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--text3);
+    flex-shrink: 0; margin-right: 4px;
+  }
+
+  .alm-btn {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 4px; padding: 5px 12px;
+    color: var(--text2); font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; font-weight: 600; letter-spacing: 1px;
+    cursor: pointer; transition: all .2s; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .alm-btn:hover, .alm-btn.active {
+    border-color: var(--amber); color: var(--amber);
+    background: rgba(245,200,66,0.08);
+  }
   .toolbar {
     display: flex; gap: 10px; align-items: center;
     padding: 14px 20px;
@@ -672,7 +697,7 @@
       <span id="theme-label">OSCURO</span>
     </button>
     <div class="header-meta">
-      <span class="fecha">09 / MAR / 2026</span>
+      <span class="fecha">10 / MAR / 2026</span>
       ÚLTIMA ACTUALIZACIÓN
     </div>
   </div>
@@ -756,6 +781,10 @@
       <h2>Inventario Completo</h2>
       <span class="badge" id="table-count-badge">—</span>
     </div>
+    <div class="toolbar-almacen" id="almacen-toolbar">
+      <span class="toolbar-label">Almacén:</span>
+      <!-- generado por JS -->
+    </div>
     <div class="toolbar">
       <input class="search-box" id="search-input" type="text" placeholder="Buscar ítem...">
       <button class="filter-btn active" data-filter="TODOS" onclick="setFilter('TODOS', this)">Todos</button>
@@ -815,7 +844,7 @@
 <footer>
   <span>INVENTARIO VIERDES · MINA CUAJONE · ÁREA DE MANTENIMIENTO ÁREAS VERDES</span>
   <span style="color:var(--text2)">Desarrollado por <strong style="color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px">René J. Coayla Causillas</strong></span>
-  <span>09.03.2026</span>
+  <span>10.03.2026</span>
 </footer>
 
 <script>
@@ -857,84 +886,119 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // ── DATA ──────────────────────────────────────────────────────────────────
 const raw = [
-  ["Caballeriza Herramientas","Herramientas","Pico pequeño",8],
-  ["Caballeriza Herramientas","Herramientas","Lampa o Pala",11],
-  ["Caballeriza Herramientas","Herramientas","Trinche",7],
-  ["Caballeriza Herramientas","Herramientas","Fumigadora Manual",3],
-  ["Caballeriza Herramientas","SSO","Botiquín Grande",1],
-  ["Caballeriza Herramientas","SSO","Botiquín Mediano",1],
-  ["Caballeriza Herramientas","Insumos","Aceite de 2 tiempos",97],
-  ["Caballeriza Herramientas","Equipos","Fumigadora a Motor STIHL SR440",2],
-  ["Caballeriza Herramientas","Herramientas","Plásticos tipo Lona",4],
-  ["Caballeriza Herramientas","Insumos","Bloqueador Solar Dermosol 50",4],
-  ["Caballeriza Herramientas","Insumos","Cortina p/ baño",6],
-  ["Caballeriza Herramientas","Insumos","Pastillas p/ tanque",32],
-  ["Caballeriza Herramientas","Insumos","Paño Súper Absorvente",40],
-  ["Caballeriza Herramientas","Insumos","Hisopo p/ baño",8],
-  ["Caballeriza Herramientas","Insumos","Desatorador de baño",6],
-  ["Caballeriza Herramientas","Herramientas","Visera p/ casco",20],
-  ["Caballeriza Herramientas","Herramientas","Orejeras p/ casco",3],
-  ["Caballeriza Herramientas","Herramientas","Tubo STIHL",2],
-  ["Caballeriza Herramientas","Herramientas","Basurero de plástico",2],
-  ["Caballeriza Herramientas","Herramientas","Recogedor de plástico",6],
-  ["Caballeriza Herramientas","Herramientas","Picos",15],
-  ["Caballeriza Herramientas","SSO","Extintores",3],
-  ["Caballeriza Herramientas","Herramientas","Rollo de nylon",1],
-  ["Caballeriza Herramientas","Herramientas","Tijeras pico loro",5],
-  ["Caballeriza Herramientas","Herramientas","Dado en T",5],
-  ["Caballeriza Herramientas","Herramientas","Cabezal para Motoguadaña",1],
-  ["Caballeriza Herramientas","Herramientas","Plato de rodadura",3],
-  ["Caballeriza Herramientas","Herramientas","Barras de tránsito",8],
-  ["Caballeriza Herramientas","Herramientas","Cortador de ramas altas extendible",8],
-  ["Caballeriza Herramientas","Herramientas","Cuchillas para motoguadaña",71],
-  ["Caballeriza Herramientas","Herramientas","Caja Herramientas Sistema de Riego",2],
-  ["Caballeriza Herramientas","Herramientas","Caja Herramientas Mantenimiento",2],
-  ["Caballeriza Herramientas","Herramientas","Línea de Vida doble",4],
-  ["Caballeriza Herramientas","Herramientas","Arnés Full Body",4],
-  ["Caballeriza Herramientas","Herramientas","Pico Loro largo",3],
-  ["Caballeriza Herramientas","Herramientas","Tijera de podar Telecut GARDENA",5],
-  ["Caballeriza Herramientas","Herramientas","Serrucho",2],
-  ["Caballeriza Herramientas","Herramientas","Machete",2],
-  ["Caballeriza Herramientas","Insumos","Líquido p/ Radiador verde",1],
-  ["Caballeriza Herramientas","Insumos","Líquido p/ Radiador rojo",1],
-  ["Caballeriza Herramientas","Insumos","Limpiador multiusos x 7L",1],
-  ["Caballeriza Herramientas","Insumos","Aceite mineral premium motor gasolina",4],
-  ["Caballeriza Herramientas","Herramientas","Piqueta mango corto",6],
-  ["Caballeriza Herramientas","Herramientas","Espátulas tramontina",13],
-  ["Caballeriza Herramientas","Herramientas","Cuchillas curvas",15],
-  ["Caballeriza Herramientas","Herramientas","Cinturón de porte doble",2],
-  ["Caballeriza Herramientas","Herramientas","Lentes STIHL transparente",3],
-  ["Caballeriza Herramientas","Herramientas","Tijera de podar BAHCO",12],
-  ["Caballeriza Herramientas","Herramientas","Serrucho curvo",8],
-  ["Caballeriza Herramientas","SSO","Camilla de primeros auxilios",1],
-  ["Caballeriza Herramientas","Herramientas","Conos",4],
-  ["Caballeriza Herramientas","Herramientas","Letrero Hombres Trabajando",2],
-  ["Caballeriza Herramientas","Herramientas","Rastrillo",6],
-  ["Caballeriza Herramientas","Herramientas","Hacha",2],
-  ["Caballeriza Herramientas","Herramientas","Barra hexagonal",2],
-  ["Caballeriza Herramientas","Herramientas","Barreta",2],
-  ["Caballeriza Herramientas","Herramientas","Comba",2],
-  ["Caballeriza Herramientas","Herramientas","Pala cuadrada",6],
-  ["Caballeriza Herramientas","Herramientas","Escoba de plástico",6],
-  ["Caballeriza Herramientas","Herramientas","Escoba de metal",1],
-  ["Caballeriza Herramientas","Insumos","Detergente x 14 kilos",1],
-  ["Caballeriza Herramientas","Herramientas","Recogedor de metal",3],
-  ["Caballeriza Herramientas","Herramientas","Escobas de paja",8],
-  ["Caballeriza Herramientas","Herramientas","Escalera de tijera GELCO",2],
-  ["Caballeriza Herramientas","Insumos","Agua x 20 Litros",8],
-  ["Caballeriza Herramientas","RRHH","Bolsa roja con EPPS",1],
-  ["Caballeriza Equipos","Equipos","Podadora de altura HUSQVARNA",2],
-  ["Caballeriza Equipos","Equipos","Cortacerco de altura STIHL",2],
-  ["Caballeriza Equipos","Equipos","Cortacésped de empuje HUSQVARNA",2],
-  ["Caballeriza Equipos","Equipos","Motosierra STIHL",1],
-  ["Caballeriza Taller","Herramientas","Soga de 33 metros",4],
-  ["Caballeriza Taller","Herramientas","Galonera de 5.3 Gal",3],
-  ["Caballeriza Taller","Equipos","Esmeril STANLEY 1/2HP",1],
-  ["Caballeriza Taller","Herramientas","Manguera de 3/4 x 100 metros",3],
-  ["Caballeriza Taller","Herramientas","Manguera de 1\"",3],
-  ["Caballeriza Cochera","Herramientas","Carretilla TRUPER",13],
-  ["Caballeriza Cochera","Herramientas","Casilleros x 6",4],
+  // ── Caballeriza Almacén General ──
+  ["Caballeriza Almacén General","Insumos","Aceite de 2 tiempos",97],
+  ["Caballeriza Almacén General","Insumos","Aceite mineral premium motor gasolina",4],
+  ["Caballeriza Almacén General","Insumos","Agua x 20 Litros",8],
+  ["Caballeriza Almacén General","Herramientas","Arnés Full Body",4],
+  ["Caballeriza Almacén General","Herramientas","Barra hexagonal",2],
+  ["Caballeriza Almacén General","Herramientas","Barras de seguridad",8],
+  ["Caballeriza Almacén General","Herramientas","Barreta",2],
+  ["Caballeriza Almacén General","Herramientas","Basurero de plástico",2],
+  ["Caballeriza Almacén General","Insumos","Bloqueador Solar Dermosol 50",4],
+  ["Caballeriza Almacén General","RRHH","Bolsa roja con EPPS",1],
+  ["Caballeriza Almacén General","SSO","Botiquín Grande",1],
+  ["Caballeriza Almacén General","SSO","Botiquín Mediano",1],
+  ["Caballeriza Almacén General","Herramientas","Cabezal para Motoguadaña",1],
+  ["Caballeriza Almacén General","Herramientas","Caja de Herramientas Mantenimiento",2],
+  ["Caballeriza Almacén General","Herramientas","Caja de Herramientas Sistema de Riego",2],
+  ["Caballeriza Almacén General","SSO","Camilla de primeros auxilios",1],
+  ["Caballeriza Almacén General","Herramientas","Cinturón de porte doble",2],
+  ["Caballeriza Almacén General","Herramientas","Comba",2],
+  ["Caballeriza Almacén General","Herramientas","Conos",4],
+  ["Caballeriza Almacén General","Herramientas","Cortador de ramas altas extendible",8],
+  ["Caballeriza Almacén General","Insumos","Cortina p/ baño",6],
+  ["Caballeriza Almacén General","Herramientas","Cuchillas curvas",15],
+  ["Caballeriza Almacén General","Herramientas","Cuchillas para motoguadaña",71],
+  ["Caballeriza Almacén General","Herramientas","Dado en T",5],
+  ["Caballeriza Almacén General","Insumos","Desatorador de baño",6],
+  ["Caballeriza Almacén General","Insumos","Detergente x 14 kilos",1],
+  ["Caballeriza Almacén General","Herramientas","Escalera de tijera GELCO",2],
+  ["Caballeriza Almacén General","Herramientas","Escoba de metal",1],
+  ["Caballeriza Almacén General","Herramientas","Escoba de paja",8],
+  ["Caballeriza Almacén General","Herramientas","Escoba de plástico",4],
+  ["Caballeriza Almacén General","SSO","Extintores",3],
+  ["Caballeriza Almacén General","Equipos","Fumigadora a Motor STIHL SR440",2],
+  ["Caballeriza Almacén General","Herramientas","Fumigadora Manual",3],
+  ["Caballeriza Almacén General","Herramientas","Hacha",2],
+  ["Caballeriza Almacén General","Insumos","Hisopo p/ baño",8],
+  ["Caballeriza Almacén General","Herramientas","Lampa o Pala",11],
+  ["Caballeriza Almacén General","Herramientas","Lentes STIHL transparente",3],
+  ["Caballeriza Almacén General","Herramientas","Letrero Hombres Trabajando",2],
+  ["Caballeriza Almacén General","Insumos","Limpiador multiusos x 7L",1],
+  ["Caballeriza Almacén General","Herramientas","Linea de Vida doble",4],
+  ["Caballeriza Almacén General","Insumos","Liquido p/ Radiador rojo",1],
+  ["Caballeriza Almacén General","Insumos","Liquido p/ Radiador verde",1],
+  ["Caballeriza Almacén General","Herramientas","Machete",2],
+  ["Caballeriza Almacén General","Herramientas","Mini palas tramontina",13],
+  ["Caballeriza Almacén General","Herramientas","Orejeras p/ casco",3],
+  ["Caballeriza Almacén General","Insumos","Paño Súper Absorvente",40],
+  ["Caballeriza Almacén General","Herramientas","Pala cuadrada",6],
+  ["Caballeriza Almacén General","Insumos","Pastillas p/ tanque",32],
+  ["Caballeriza Almacén General","Herramientas","Pico Loro largo",3],
+  ["Caballeriza Almacén General","Herramientas","Pico pequeño",8],
+  ["Caballeriza Almacén General","Herramientas","Picos",15],
+  ["Caballeriza Almacén General","Herramientas","Piqueta mango corto",6],
+  ["Caballeriza Almacén General","Herramientas","Plásticos tipo Lona",4],
+  ["Caballeriza Almacén General","Herramientas","Plato de rodadura",3],
+  ["Caballeriza Almacén General","Herramientas","Rastrillo",6],
+  ["Caballeriza Almacén General","Herramientas","Recogedor de metal",3],
+  ["Caballeriza Almacén General","Herramientas","Recogedor de plástico",6],
+  ["Caballeriza Almacén General","Herramientas","Rollo de nylon",1],
+  ["Caballeriza Almacén General","Herramientas","Serrucho",2],
+  ["Caballeriza Almacén General","Herramientas","Serrucho curvo",8],
+  ["Caballeriza Almacén General","Herramientas","Tijera de podar BAHCO",12],
+  ["Caballeriza Almacén General","Herramientas","Tijera de podar Telecut GARDENA",5],
+  ["Caballeriza Almacén General","Herramientas","Tijeras pico loro",5],
+  ["Caballeriza Almacén General","Herramientas","Trinche",7],
+  ["Caballeriza Almacén General","Herramientas","Tubo STIHL",2],
+  ["Caballeriza Almacén General","Herramientas","Visera p/ casco",20],
+  // ── Caballeriza Cochera ──
   ["Caballeriza Cochera","Herramientas","Armario metálico de doble puerta",2],
+  ["Caballeriza Cochera","Herramientas","Carretilla TRUPER",10],
+  ["Caballeriza Cochera","Herramientas","Casilleros x 6",4],
+  // ── Caballeriza Equipos ──
+  ["Caballeriza Equipos","Equipos","Cortacésped de empuje HUSQVARNA",2],
+  ["Caballeriza Equipos","Equipos","Cortacerco de altura STIHL",2],
+  ["Caballeriza Equipos","Equipos","Motosierra STIHL",1],
+  ["Caballeriza Equipos","Equipos","Podadora de altura HUSQVARNA",2],
+  // ── Caballeriza Taller ──
+  ["Caballeriza Taller","Equipos","Esmeril STANLEY 1/2HP",1],
+  ["Caballeriza Taller","Herramientas","Galonera de 5.3 Gal",3],
+  ["Caballeriza Taller","Herramientas","Manguera de 1\"",3],
+  ["Caballeriza Taller","Herramientas","Manguera de 3/4 x 100 metros",3],
+  ["Caballeriza Taller","Herramientas","Soga de 33 metros",4],
+  // ── Casa 1 y huésped ──
+  ["Casa 1 y huésped","Herramientas","Carretilla TRUPER",1],
+  ["Casa 1 y huésped","Herramientas","Escoba de paja",1],
+  ["Casa 1 y huésped","Herramientas","Escoba de plástico",3],
+  ["Casa 1 y huésped","Herramientas","Faja o arnés p/ motoguadaña",1],
+  ["Casa 1 y huésped","Herramientas","Galonera de 2 gl",2],
+  ["Casa 1 y huésped","Herramientas","Manguera de 1\"",1],
+  ["Casa 1 y huésped","Herramientas","Mantas de plástico",5],
+  ["Casa 1 y huésped","Herramientas","Recogedor de metal",1],
+  ["Casa 1 y huésped","Equipos","Motoguadaña STIHL FS460 (9/10)",1],
+  // ── Club de Golf ──
+  ["Club de Golf","Equipos","ClearClut KAWASAKI FR730V",1],
+  ["Club de Golf","Equipos","Cortacésped de empuje HUSQVARNA LC 353AWD (7/10)",1],
+  ["Club de Golf","Equipos","Cortacésped de empuje HUSQVARNA LC 356VP (9/10)",2],
+  ["Club de Golf","Equipos","Motoguadaña STIHL FS450 (5/10)",3],
+  ["Club de Golf","Equipos","Motoguadaña STIHL FS460 (9/10)",2],
+  ["Club de Golf","Herramientas","Barras de seguridad",14],
+  ["Club de Golf","Herramientas","Carretilla TRUPER",3],
+  ["Club de Golf","Herramientas","Conos",22],
+  ["Club de Golf","Herramientas","Escoba de paja",2],
+  ["Club de Golf","Herramientas","Escoba de plástico",8],
+  ["Club de Golf","Herramientas","Faja o arnés p/ motoguadaña",5],
+  ["Club de Golf","Herramientas","Galonera de 2 gl",1],
+  ["Club de Golf","Herramientas","Lampa o pala",2],
+  ["Club de Golf","Herramientas","Letrero Hombres Trabajando",3],
+  ["Club de Golf","Herramientas","Manguera de 1\"",2],
+  ["Club de Golf","Herramientas","Mantas de plástico",5],
+  ["Club de Golf","Herramientas","Pala cuadrada",5],
+  ["Club de Golf","Herramientas","Pico pequeño",2],
+  ["Club de Golf","Herramientas","Rastrillo",3],
+  ["Club de Golf","Herramientas","Trinche",3],
 ];
 
 // ── NORMALIZAR TIPOS ──────────────────────────────────────────────────────
@@ -1115,24 +1179,26 @@ function buildEquipos() {
 }
 
 // ── TABLA ────────────────────────────────────────────────────────────────
-let currentFilter = 'TODOS';
-let currentSearch = '';
+let currentFilter  = 'TODOS';
+let currentAlmacen = 'TODOS';
+let currentSearch  = '';
 
 function renderTable() {
   const filtered = data.filter(d => {
-    const matchFilter = currentFilter==='TODOS' || d.tipo===currentFilter;
-    const matchSearch = !currentSearch ||
+    const matchTipo    = currentFilter==='TODOS'  || d.tipo===currentFilter;
+    const matchAlmacen = currentAlmacen==='TODOS' || d.almacen===currentAlmacen;
+    const matchSearch  = !currentSearch ||
       d.desc.toLowerCase().includes(currentSearch) ||
       d.almacen.toLowerCase().includes(currentSearch) ||
       d.tipo.toLowerCase().includes(currentSearch);
-    return matchFilter && matchSearch;
+    return matchTipo && matchAlmacen && matchSearch;
   });
 
   document.getElementById('table-count-badge').textContent = filtered.length + ' ÍTEMS';
   document.getElementById('inv-tbody').innerHTML = filtered.map((d,i)=>`
     <tr>
       <td style="color:var(--text3);font-size:10px">${String(i+1).padStart(2,'0')}</td>
-      <td class="almacen-tag">${d.almacen.replace('Caballeriza ','')}</td>
+      <td class="almacen-tag">${d.almacen}</td>
       <td><span class="tipo-badge" style="${TIPO_BADGE_STYLE[d.tipo]||''}">${d.tipo}</span></td>
       <td style="color:var(--text)">${d.desc}</td>
       <td>${d.qty}</td>
@@ -1144,6 +1210,28 @@ function setFilter(f, btn) {
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderTable();
+}
+
+function setAlmacen(a, btn) {
+  currentAlmacen = a;
+  document.querySelectorAll('.alm-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function buildAlmacenToolbar() {
+  const almacenes = ['TODOS', ...new Set(data.map(d=>d.almacen).sort())];
+  const toolbar = document.getElementById('almacen-toolbar');
+  const label = toolbar.querySelector('.toolbar-label');
+  toolbar.innerHTML = '';
+  toolbar.appendChild(label);
+  almacenes.forEach(a => {
+    const btn = document.createElement('button');
+    btn.className = 'alm-btn' + (a==='TODOS' ? ' active' : '');
+    btn.textContent = a==='TODOS' ? 'Todos' : a;
+    btn.onclick = () => setAlmacen(a, btn);
+    toolbar.appendChild(btn);
+  });
 }
 
 document.getElementById('search-input').addEventListener('input', e => {
@@ -1172,6 +1260,7 @@ buildAlmacenBars();
 buildTopBars();
 buildSSO();
 buildEquipos();
+buildAlmacenToolbar();
 renderTable();
 </script>
 </div><!-- #app -->
