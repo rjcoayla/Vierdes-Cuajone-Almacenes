@@ -191,6 +191,8 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 .btn-ok.blue:hover{background:var(--blue);color:#fff}
 
 /* botón editar ítem en tabla */
+.btn-dl{margin-left:auto;background:none;border:1.5px solid var(--green2);color:var(--green3);border-radius:5px;padding:5px 12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .16s;white-space:nowrap}
+.btn-dl:hover{background:var(--green2);color:#f0f8ea}
 .btn-edit-itm{background:none;border:1px solid var(--border);border-radius:4px;color:var(--text4);cursor:pointer;font-size:11px;padding:3px 7px;transition:all .15s;white-space:nowrap}
 .btn-edit-itm:hover{border-color:var(--amber);color:var(--amber);background:rgba(245,200,66,.08)}
 
@@ -262,6 +264,7 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
 }
 @media(max-width:420px){.g5{grid-template-columns:1fr 1fr}}
 </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -341,14 +344,8 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
     <div class="panel"><div class="phdr"><h2>Equipos Motorizados</h2><span class="pbadge">MOTORIZADO</span></div>
       <div class="pbody" style="padding:13px"><div class="eqgrid" id="eq-grid"></div></div>
     </div>
-    <div class="panel"><div class="phdr"><h2>Seguridad, Salud & RRHH</h2><span class="pbadge">SSO</span></div>
-      <div class="pbody">
-        <div class="bars" id="sso-bars"></div>
-        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:var(--text3);margin-bottom:7px">RRHH</div>
-          <div id="rrhh-list"></div>
-        </div>
-      </div>
+    <div class="panel"><div class="phdr"><h2 id="sso-panel-title">Categorías Especiales</h2><span class="pbadge" id="sso-panel-badge">SSO / RRHH</span></div>
+      <div class="pbody" id="sso-panel-body" style="padding:0"></div>
     </div>
   </div>
 </div>
@@ -356,16 +353,12 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
 <!-- ═══════ TAB INVENTARIO ═══════ -->
 <div class="pane" id="tab-inventario">
   <div class="panel">
-    <div class="phdr"><h2>Inventario Completo</h2><span class="pbadge" id="inv-badge">—</span></div>
+    <div class="phdr"><h2>Inventario Completo</h2><span class="pbadge" id="inv-badge">—</span><button class="btn-dl" onclick="descargarExcel()" title="Descargar Excel">⬇ EXCEL</button></div>
     <div class="tbar" id="alm-toolbar"><span class="tbar-lbl">Almacén:</span></div>
     <div class="tbar">
       <input class="sbox" id="srch" type="text" placeholder="🔍  Buscar ítem, almacén o tipo...">
       <span class="tbar-lbl" style="margin-left:6px">Tipo:</span>
-      <button class="fb on-g" onclick="setTipo('TODOS',this)">Todos</button>
-      <button class="fb" onclick="setTipo('Herramientas',this)">Herramientas</button>
-      <button class="fb" onclick="setTipo('Insumos',this)">Insumos</button>
-      <button class="fb" onclick="setTipo('Equipos',this)">Equipos</button>
-      <button class="fb" onclick="setTipo('SSO',this)">SSO</button>
+      <div id="tipo-toolbar" style="display:contents"></div>
     </div>
     <div class="twrap">
       <table class="tbl">
@@ -744,19 +737,19 @@ let ops = [], extraAlm = [], extraCats = [];
 let pendIng = [], pendTra = [];
 let fAlm='TODOS', fTipo='TODOS', fOp='TODOS', srch='';
 
-async function saveState() {
+function saveState() {
   try{
-    await window.storage.set('vierdes-ops',  JSON.stringify(ops));
-    await window.storage.set('vierdes-alms', JSON.stringify(extraAlm));
-    await window.storage.set('vierdes-cats', JSON.stringify(extraCats));
-  }catch(e){}
+    localStorage.setItem('vierdes-ops',  JSON.stringify(ops));
+    localStorage.setItem('vierdes-alms', JSON.stringify(extraAlm));
+    localStorage.setItem('vierdes-cats', JSON.stringify(extraCats));
+  }catch(e){ console.warn('localStorage no disponible',e); }
 }
-async function loadState() {
+function loadState() {
   try{
-    const o=await window.storage.get('vierdes-ops');  if(o) ops=JSON.parse(o.value);
-    const a=await window.storage.get('vierdes-alms'); if(a) extraAlm=JSON.parse(a.value);
-    const ca=await window.storage.get('vierdes-cats'); if(ca) extraCats=JSON.parse(ca.value);
-  }catch(e){}
+    const o=localStorage.getItem('vierdes-ops');  if(o) ops=JSON.parse(o);
+    const a=localStorage.getItem('vierdes-alms'); if(a) extraAlm=JSON.parse(a);
+    const ca=localStorage.getItem('vierdes-cats'); if(ca) extraCats=JSON.parse(ca);
+  }catch(e){ console.warn('Error cargando estado',e); }
 }
 
 /* ═══════════════ INVENTARIO EFECTIVO ═══════════════ */
@@ -823,7 +816,7 @@ function refresh() {
   document.getElementById('tc-inv').textContent=inv.length;
   document.getElementById('tc-op').textContent=ops.length;
   buildDonut(inv); buildAlmBars(inv); buildTopBars(inv); buildEq(inv); buildSSO(inv);
-  buildAlmToolbar(); renderInv(inv); renderOps();
+  buildAlmToolbar(); buildTipoToolbar(inv); renderInv(inv); renderOps();
 }
 
 /* ═══════════════ GRÁFICOS ═══════════════ */
@@ -842,7 +835,7 @@ function buildDonut(inv) {
     p.setAttribute('d',`M${x1},${y1} A${r},${r} 0 ${lg} 1 ${x2},${y2}`);
     p.setAttribute('fill','none'); p.setAttribute('stroke',getTipoColor(t)); p.setAttribute('stroke-width',sw);
     svg.appendChild(p); ang=a2+.01;
-    leg.innerHTML+=`<div class="leg-item"><div class="leg-dot" style="background:${TC[t]||'#888'}"></div><span>${t}</span><span class="leg-pct">${Math.round(pct*100)}%</span></div>`;
+    leg.innerHTML+=`<div class="leg-item"><div class="leg-dot" style="background:${getTipoColor(t)}"></div><span>${escH(t)}</span><span class="leg-pct">${Math.round(pct*100)}%</span></div>`;
   });
   const dk=document.documentElement.getAttribute('data-theme')!=='light';
   const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
@@ -882,15 +875,37 @@ function buildEq(inv){
     </div>`).join('');
 }
 
+const TIPOS_CORE = new Set(['Herramientas','Insumos','Equipos']);
+
 function buildSSO(inv){
-  const sso=inv.filter(d=>d.tipo==='SSO'),mx=Math.max(...sso.map(d=>d.qty),1);
-  document.getElementById('sso-bars').innerHTML=sso.map(d=>`
-    <div class="brow"><div class="blbl"><span>${d.desc}</span><span class="bqty" style="color:var(--red)">${d.qty}</span></div>
-    <div class="btrack"><div class="bfill" style="width:${d.qty/mx*100}%;--fc:var(--red)"></div></div></div>`).join('');
-  const rr=inv.filter(d=>d.tipo==='RRHH');
-  document.getElementById('rrhh-list').innerHTML=rr.map(d=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--text2)">
-      <span>${d.desc}</span><span style="font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;color:#c09ef0">${d.qty}</span></div>`).join('');
+  // Categorías especiales = todo lo que no es core
+  const especiales=[...new Set(inv.filter(d=>!TIPOS_CORE.has(d.tipo)).map(d=>d.tipo))].sort();
+  const panel=document.getElementById('sso-panel-body');
+  const title=document.getElementById('sso-panel-title');
+  const badge=document.getElementById('sso-panel-badge');
+
+  if(!especiales.length){
+    title.textContent='Categorías Especiales';
+    badge.textContent='—';
+    panel.innerHTML='<div class="emsg" style="padding:28px">Sin categorías especiales</div>';
+    return;
+  }
+
+  title.textContent='Categorías Especiales';
+  badge.textContent=especiales.join(' / ');
+
+  panel.innerHTML=especiales.map(tipo=>{
+    const items=inv.filter(d=>d.tipo===tipo);
+    const mx=Math.max(...items.map(d=>d.qty),1);
+    const color=getTipoColor(tipo);
+    return `<div style="padding:14px 16px;border-bottom:1px solid var(--border)">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:${color};margin-bottom:9px;text-transform:uppercase">${escH(tipo)}</div>
+      <div class="bars">${items.map(d=>`
+        <div class="brow"><div class="blbl"><span>${escH(d.desc)}</span><span class="bqty" style="color:${color}">${d.qty}</span></div>
+        <div class="btrack"><div class="bfill" style="width:${d.qty/mx*100}%;--fc:${color}"></div></div></div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 /* ═══════════════ TABLA INVENTARIO ═══════════════ */
@@ -928,12 +943,25 @@ function renderInv(inv){
     </tr>`).join('');
 }
 
-function setTipo(t,btn){
+function buildTipoToolbar(inv){
+  const tipos=['TODOS',...[...new Set(inv.map(d=>d.tipo))].sort()];
+  const bar=document.getElementById('tipo-toolbar');
+  bar.innerHTML=tipos.map(t=>{
+    const isActive=(t===fTipo);
+    const lbl=t==='TODOS'?'Todos':escH(t);
+    return `<button class="fb${isActive?' on-g':''}" onclick="setTipoBtn('${t}',this)">${lbl}</button>`;
+  }).join('');
+}
+
+function setTipoBtn(t,btn){
   fTipo=t;
-  document.querySelectorAll('#tab-inventario .fb').forEach(b=>b.classList.remove('on-g'));
+  document.querySelectorAll('#tipo-toolbar .fb').forEach(b=>b.classList.remove('on-g'));
   btn.classList.add('on-g');
   renderInv(getInv());
 }
+
+function setTipo(t,btn){ setTipoBtn(t,btn); } // alias para compatibilidad
+
 document.getElementById('srch').addEventListener('input',e=>{srch=e.target.value.toLowerCase().trim();renderInv(getInv())});
 
 /* ═══════════════ TABLA OPERACIONES ═══════════════ */
@@ -1385,6 +1413,22 @@ function saveEdit(){
   refresh();
 }
 
+/* ═══════════════ DESCARGA EXCEL ═══════════════ */
+function descargarExcel(){
+  const inv=getInv();
+  const rows=[['Almacén','Categoría','Descripción','Cantidad']];
+  inv.sort((a,b)=>a.almacen.localeCompare(b.almacen)||a.tipo.localeCompare(b.tipo)||a.desc.localeCompare(b.desc))
+     .forEach(d=>rows.push([d.almacen, d.tipo, d.desc, d.qty]));
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  // Anchos de columna
+  ws['!cols']=[{wch:28},{wch:14},{wch:48},{wch:10}];
+  // Estilo cabecera (SheetJS CE no aplica estilos pero sí los nombres)
+  XLSX.utils.book_append_sheet(wb,ws,'Inventario');
+  const fecha=new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'-');
+  XLSX.writeFile(wb, `VIERDES_Inventario_${fecha}.xlsx`);
+}
+
 /* ═══════════════ TABS ═══════════════ */
 function swTab(id,btn){
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
@@ -1427,7 +1471,7 @@ function togEye(){
 window.addEventListener('DOMContentLoaded',()=>document.getElementById('lk-in').focus());
 
 /* ═══════════════ INIT ═══════════════ */
-async function init(){ await loadState(); refresh(); }
+function init(){ loadState(); refresh(); }
 init();
 </script>
 </body>
