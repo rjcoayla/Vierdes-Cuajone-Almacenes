@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <!-- Favicon & App Icon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8IS0tIEZvbmRvIHZlcmRlIG9zY3VybyAtLT4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9Ijk2IiBmaWxsPSIjMGQxZjBkIi8+CiAgCiAgPCEtLSBUYWxsbyBjZW50cmFsIC0tPgogIDxsaW5lIHgxPSIyNTYiIHkxPSI0MjAiIHgyPSIyNTYiIHkyPSIyMTAiIHN0cm9rZT0iI2Q0ZjA1NyIgc3Ryb2tlLXdpZHRoPSIxOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgCiAgPCEtLSBIb2phIGdyYW5kZSBpenF1aWVyZGEgLS0+CiAgPHBhdGggZD0iTTI1NiAyOTAgUTE3MCAyMzAgMTU1IDE0MCBRMjEwIDE1NSAyNTYgMjkwWiIgZmlsbD0iIzUyYTA2YSIvPgogIAogIDwhLS0gSG9qYSBncmFuZGUgZGVyZWNoYSAtLT4KICA8cGF0aCBkPSJNMjU2IDI2MCBRMzQyIDIwMCAzNjAgMTEwIFEzMDUgMTI4IDI1NiAyNjBaIiBmaWxsPSIjNmFiZjgyIi8+CiAgCiAgPCEtLSBIb2phIHBlcXVlw7FhIGl6cXVpZXJkYSAtLT4KICA8cGF0aCBkPSJNMjU2IDM3MCBRMTk1IDMzNSAxODggMjcwIFEyMjggMjgyIDI1NiAzNzBaIiBmaWxsPSIjNTJhMDZhIiBvcGFjaXR5PSIwLjg1Ii8+CiAgCiAgPCEtLSBIb2phIHBlcXVlw7FhIGRlcmVjaGEgLS0+CiAgPHBhdGggZD0iTTI1NiAzNDAgUTMxOCAzMDUgMzI4IDI0MCBRMjg4IDI1NSAyNTYgMzQwWiIgZmlsbD0iIzZhYmY4MiIgb3BhY2l0eT0iMC44NSIvPgogIAogIDwhLS0gUHVudGEgYnJvdGUgc3VwZXJpb3IgLS0+CiAgPHBhdGggZD0iTTI1NiAxNDAgUTI0MCA5MCAyNTYgNjAgUTI3MiA5MCAyNTYgMTQwWiIgZmlsbD0iI2Q0ZjA1NyIvPgogIAogIDwhLS0gVGllcnJhIC8gYmFzZSAtLT4KICA8cmVjdCB4PSIxOTAiIHk9IjQwOCIgd2lkdGg9IjEzMiIgaGVpZ2h0PSIyMiIgcng9IjExIiBmaWxsPSIjNTJhMDZhIiBvcGFjaXR5PSIwLjUiLz4KICAKICA8IS0tIFB1bnRvIGRlIGx1eiBlbiBicm90ZSAtLT4KICA8Y2lyY2xlIGN4PSIyNTYiIGN5PSI3MiIgcj0iOCIgZmlsbD0iI2YwZjhlYSIgb3BhY2l0eT0iMC43Ii8+Cjwvc3ZnPgo=">
+  <link rel="shortcut icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8IS0tIEZvbmRvIHZlcmRlIG9zY3VybyAtLT4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9Ijk2IiBmaWxsPSIjMGQxZjBkIi8+CiAgCiAgPCEtLSBUYWxsbyBjZW50cmFsIC0tPgogIDxsaW5lIHgxPSIyNTYiIHkxPSI0MjAiIHgyPSIyNTYiIHkyPSIyMTAiIHN0cm9rZT0iI2Q0ZjA1NyIgc3Ryb2tlLXdpZHRoPSIxOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgCiAgPCEtLSBIb2phIGdyYW5kZSBpenF1aWVyZGEgLS0+CiAgPHBhdGggZD0iTTI1NiAyOTAgUTE3MCAyMzAgMTU1IDE0MCBRMjEwIDE1NSAyNTYgMjkwWiIgZmlsbD0iIzUyYTA2YSIvPgogIAogIDwhLS0gSG9qYSBncmFuZGUgZGVyZWNoYSAtLT4KICA8cGF0aCBkPSJNMjU2IDI2MCBRMzQyIDIwMCAzNjAgMTEwIFEzMDUgMTI4IDI1NiAyNjBaIiBmaWxsPSIjNmFiZjgyIi8+CiAgCiAgPCEtLSBIb2phIHBlcXVlw7FhIGl6cXVpZXJkYSAtLT4KICA8cGF0aCBkPSJNMjU2IDM3MCBRMTk1IDMzNSAxODggMjcwIFEyMjggMjgyIDI1NiAzNzBaIiBmaWxsPSIjNTJhMDZhIiBvcGFjaXR5PSIwLjg1Ii8+CiAgCiAgPCEtLSBIb2phIHBlcXVlw7FhIGRlcmVjaGEgLS0+CiAgPHBhdGggZD0iTTI1NiAzNDAgUTMxOCAzMDUgMzI4IDI0MCBRMjg4IDI1NSAyNTYgMzQwWiIgZmlsbD0iIzZhYmY4MiIgb3BhY2l0eT0iMC44NSIvPgogIAogIDwhLS0gUHVudGEgYnJvdGUgc3VwZXJpb3IgLS0+CiAgPHBhdGggZD0iTTI1NiAxNDAgUTI0MCA5MCAyNTYgNjAgUTI3MiA5MCAyNTYgMTQwWiIgZmlsbD0iI2Q0ZjA1NyIvPgogIAogIDwhLS0gVGllcnJhIC8gYmFzZSAtLT4KICA8cmVjdCB4PSIxOTAiIHk9IjQwOCIgd2lkdGg9IjEzMiIgaGVpZ2h0PSIyMiIgcng9IjExIiBmaWxsPSIjNTJhMDZhIiBvcGFjaXR5PSIwLjUiLz4KICAKICA8IS0tIFB1bnRvIGRlIGx1eiBlbiBicm90ZSAtLT4KICA8Y2lyY2xlIGN4PSIyNTYiIGN5PSI3MiIgcj0iOCIgZmlsbD0iI2YwZjhlYSIgb3BhY2l0eT0iMC43Ii8+Cjwvc3ZnPgo=">
+  <link rel="apple-touch-icon" id="apple-icon" href="">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="VIERDES">
+  <meta name="theme-color" content="#0d1f0d">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VIERDES — Sistema de Inventario · Mina Cuajone</title>
@@ -1490,6 +1498,33 @@ window.addEventListener('DOMContentLoaded',()=>document.getElementById('lk-in').
 /* ═══════════════ INIT ═══════════════ */
 function init(){ loadState(); refresh(); }
 init();
+
+/* ═══════ APPLE TOUCH ICON (genera PNG con canvas) ═══════ */
+(function(){
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <rect width="512" height="512" rx="96" fill="#0d1f0d"/>
+    <line x1="256" y1="420" x2="256" y2="210" stroke="#d4f057" stroke-width="18" stroke-linecap="round"/>
+    <path d="M256 290 Q170 230 155 140 Q210 155 256 290Z" fill="#52a06a"/>
+    <path d="M256 260 Q342 200 360 110 Q305 128 256 260Z" fill="#6abf82"/>
+    <path d="M256 370 Q195 335 188 270 Q228 282 256 370Z" fill="#52a06a" opacity="0.85"/>
+    <path d="M256 340 Q318 305 328 240 Q288 255 256 340Z" fill="#6abf82" opacity="0.85"/>
+    <path d="M256 140 Q240 90 256 60 Q272 90 256 140Z" fill="#d4f057"/>
+    <rect x="190" y="408" width="132" height="22" rx="11" fill="#52a06a" opacity="0.5"/>
+    <circle cx="256" cy="72" r="8" fill="#f0f8ea" opacity="0.7"/>
+  </svg>`;
+  const img=new Image();
+  const blob=new Blob([svg],{type:'image/svg+xml'});
+  const url=URL.createObjectURL(blob);
+  img.onload=function(){
+    const cv=document.createElement('canvas'); cv.width=cv.height=180;
+    const ctx=cv.getContext('2d'); ctx.drawImage(img,0,0,180,180);
+    const link=document.getElementById('apple-icon');
+    if(link) link.href=cv.toDataURL('image/png');
+    URL.revokeObjectURL(url);
+  };
+  img.src=url;
+})();
+
 </script>
 </body>
 </html>
