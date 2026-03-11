@@ -188,8 +188,36 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 .btn-ok:hover{background:var(--green2);transform:translateY(-1px)}
 .btn-ok.blue{background:rgba(106,184,232,.15);border:2px solid var(--blue);color:var(--blue)}
 .btn-ok.blue:hover{background:var(--blue);color:#fff}
+
+/* botón editar ítem en tabla */
+.btn-edit-itm{background:none;border:1px solid var(--border);border-radius:4px;color:var(--text4);cursor:pointer;font-size:11px;padding:3px 7px;transition:all .15s;white-space:nowrap}
+.btn-edit-itm:hover{border-color:var(--amber);color:var(--amber);background:rgba(245,200,66,.08)}
+
 .btn-anl{background:none;border:1px solid var(--border);border-radius:3px;padding:3px 8px;color:var(--text4);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .18s;white-space:nowrap}
 .btn-anl:hover{border-color:var(--red);color:var(--red)}
+
+/* ════════════ TABLA EXCEL (modales) ════════════ */
+.exc-wrap{border:1.5px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:6px}
+.exc-tbl{width:100%;border-collapse:collapse}
+.exc-tbl thead tr{background:var(--bg4);border-bottom:2px solid var(--border2)}
+.exc-tbl th{padding:9px 10px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2);text-align:left;white-space:nowrap}
+.exc-tbl th.r{text-align:right}
+.exc-tbl tbody tr{border-bottom:1px solid var(--border)}
+.exc-tbl tbody tr:last-child{border-bottom:none}
+.exc-tbl tbody tr:hover td{background:var(--bg4)}
+.exc-tbl td{padding:3px 4px;vertical-align:middle;background:var(--bg3)}
+.exc-tbl td.del-col{width:36px;text-align:center}
+.exc-sel,.exc-in{background:var(--bg2);border:1.5px solid transparent;border-radius:4px;padding:7px 9px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;width:100%;outline:none;transition:border-color .15s;cursor:pointer}
+.exc-sel:hover,.exc-in:hover{border-color:var(--border2)}
+.exc-sel:focus,.exc-in:focus{border-color:var(--green2);background:var(--bg2)}
+.exc-in-new{background:var(--bg2);border:1.5px solid var(--lime);border-radius:4px;padding:6px 9px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;width:100%;outline:none;margin-top:3px;transition:border-color .15s}
+.exc-in-new::placeholder{color:var(--text4);font-size:10px}
+.exc-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;margin:0 auto;transition:all .14s}
+.exc-del:hover{color:var(--red);background:rgba(240,101,74,.12)}
+.exc-add{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:9px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--green3);background:none;border:1.5px dashed var(--border);border-radius:5px;cursor:pointer;transition:all .18s;margin-top:6px;text-transform:uppercase}
+.exc-add:hover{border-color:var(--green2);background:rgba(82,160,106,.06);color:var(--green2)}
+.exc-scroll{max-height:260px;overflow-y:auto}
+.exc-tipo-dot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px;vertical-align:middle}
 
 /* ════════════ LOCK ════════════ */
 #lk-ov{position:fixed;inset:0;z-index:9999;background:#050a06;display:flex;align-items:center;justify-content:center;transition:opacity .5s ease}
@@ -340,7 +368,7 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
     </div>
     <div class="twrap">
       <table class="tbl">
-        <thead><tr><th>#</th><th>Almacén</th><th>Categoría</th><th>Descripción</th><th style="text-align:right">Cant.</th></tr></thead>
+        <thead><tr><th>#</th><th>Almacén</th><th>Categoría</th><th>Descripción</th><th style="text-align:right">Cant.</th><th style="width:36px"></th></tr></thead>
         <tbody id="inv-tbody"></tbody>
       </table>
     </div>
@@ -390,7 +418,14 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
         </div>
         <div class="ff">
           <label class="flbl">Responsable *</label>
-          <input id="ing-resp" class="fi" type="text" placeholder="Nombre del responsable">
+          <select id="ing-resp" class="fsel">
+          <option value="">— Seleccionar responsable —</option>
+          <option value="Alfredo Roque">Alfredo Roque</option>
+          <option value="Cristhian Mamani">Cristhian Mamani</option>
+          <option value="Dennis Choque">Dennis Choque</option>
+          <option value="René Coayla">René Coayla</option>
+          <option value="Rodrigo Quiroga">Rodrigo Quiroga</option>
+        </select>
         </div>
       </div>
       <div class="frow">
@@ -405,21 +440,21 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
       </div>
 
       <div class="ssep">ÍTEMS A INGRESAR</div>
-      <div class="addrow">
-        <input id="ing-desc" class="fi" type="text" placeholder="Descripción del ítem" style="flex:2" onkeydown="if(event.key==='Enter')addItm('ing')">
-        <select id="ing-tipo" class="fsel" style="width:140px">
-          <option value="Herramientas">Herramientas</option>
-          <option value="Equipos">Equipos</option>
-          <option value="Insumos">Insumos</option>
-          <option value="SSO">SSO</option>
-          <option value="RRHH">RRHH</option>
-        </select>
-        <input id="ing-qty" class="fi" type="number" min="1" placeholder="Cant." style="width:88px" onkeydown="if(event.key==='Enter')addItm('ing')">
-        <button class="btn-c" onclick="addItm('ing')">＋ Agregar</button>
+      <div class="exc-wrap">
+        <div class="exc-scroll">
+          <table class="exc-tbl">
+            <thead><tr>
+              <th style="width:150px">Categoría</th>
+              <th>Descripción del Material</th>
+              <th style="width:88px;text-align:right">Cant.</th>
+              <th style="width:36px"></th>
+            </tr></thead>
+            <tbody id="ing-tbody"></tbody>
+          </table>
+        </div>
       </div>
+      <button class="exc-add" onclick="addIngRow()">＋ Agregar fila</button>
       <div id="ing-ierr" class="ferr"></div>
-      <div id="ing-ilist" class="ilist"></div>
-      <div id="ing-iempty" class="emsg">NINGÚN ÍTEM AGREGADO AÚN</div>
     </div>
     <div class="mftr">
       <div id="ing-ferr" class="ferr" style="flex:1"></div>
@@ -441,7 +476,7 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
       <div class="frow3">
         <div class="ff">
           <label class="flbl">Almacén Origen *</label>
-          <select id="tra-orig" class="fsel" onchange="onTraOrig()">
+          <select id="tra-orig" class="fsel" >
             <option value="">— Seleccionar —</option>
           </select>
         </div>
@@ -461,7 +496,14 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
       <div class="frow">
         <div class="ff">
           <label class="flbl">Responsable *</label>
-          <input id="tra-resp" class="fi" type="text" placeholder="Nombre del responsable">
+          <select id="tra-resp" class="fsel">
+          <option value="">— Seleccionar responsable —</option>
+          <option value="Alfredo Roque">Alfredo Roque</option>
+          <option value="Cristhian Mamani">Cristhian Mamani</option>
+          <option value="Dennis Choque">Dennis Choque</option>
+          <option value="René Coayla">René Coayla</option>
+          <option value="Rodrigo Quiroga">Rodrigo Quiroga</option>
+        </select>
         </div>
         <div class="ff">
           <label class="flbl">N° de Guía <small>(opcional)</small></label>
@@ -469,22 +511,82 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
         </div>
       </div>
 
-      <div class="ssep">ÍTEMS A TRASLADAR</div>
-      <div class="addrow">
-        <select id="tra-isel" class="fsel" style="flex:1">
-          <option value="">— Seleccionar origen primero —</option>
-        </select>
-        <input id="tra-qty" class="fi" type="number" min="1" placeholder="Cant." style="width:88px" onkeydown="if(event.key==='Enter')addItm('tra')">
-        <button class="btn-c" onclick="addItm('tra')">＋ Agregar</button>
+      <div class="ssep" style="font-size:11px">ÍTEMS A TRASLADAR <small style="color:var(--text4);font-weight:400;letter-spacing:0;text-transform:none;font-size:9px">— puedes agregar ítems antes de definir origen/destino</small></div>
+      <div class="exc-wrap">
+        <div class="exc-scroll">
+          <table class="exc-tbl">
+            <thead><tr>
+              <th style="width:150px">Categoría</th>
+              <th>Descripción del Material</th>
+              <th style="width:88px;text-align:right">Cant.</th>
+              <th style="width:36px"></th>
+            </tr></thead>
+            <tbody id="tra-tbody"></tbody>
+          </table>
+        </div>
       </div>
+      <button class="exc-add" onclick="addTraRow()">＋ Agregar fila</button>
       <div id="tra-ierr" class="ferr"></div>
-      <div id="tra-ilist" class="ilist"></div>
-      <div id="tra-iempty" class="emsg">NINGÚN ÍTEM AGREGADO AÚN</div>
     </div>
     <div class="mftr">
       <div id="tra-ferr" class="ferr" style="flex:1"></div>
       <button class="btn-cancel" onclick="cerrarModal('mod-tra')">CANCELAR</button>
       <button class="btn-ok blue" onclick="submitOp('tra')">✓ REGISTRAR TRASLADO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL EDICIÓN DE ÍTEM ═══════ -->
+<div id="mod-edit" class="overlay" style="display:none" onclick="ovClick(event,'mod-edit')">
+  <div class="modal" style="max-width:540px">
+    <div class="mhdr">
+      <div>
+        <div class="mtitle" style="color:var(--amber)">✏ EDITAR ÍTEM</div>
+        <div class="msub" id="edit-sub">Modificar nomenclatura y cantidad</div>
+      </div>
+      <button class="mclose" onclick="cerrarModal('mod-edit')">✕</button>
+    </div>
+    <div class="mbody">
+      <!-- Info actual (solo lectura) -->
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-bottom:18px;font-size:11px;color:var(--text3);letter-spacing:1px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;color:var(--text4)">ESTADO ACTUAL</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div><span style="display:block;color:var(--text4);font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Almacén</span><strong id="edit-cur-alm" style="color:var(--text2)">—</strong></div>
+          <div><span style="display:block;color:var(--text4);font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Categoría</span><strong id="edit-cur-tipo" style="color:var(--text2)">—</strong></div>
+          <div><span style="display:block;color:var(--text4);font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Cantidad</span><strong id="edit-cur-qty" style="color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-size:18px">—</strong></div>
+        </div>
+        <div style="margin-top:7px"><span style="display:block;color:var(--text4);font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Descripción actual</span><strong id="edit-cur-desc" style="color:var(--text)">—</strong></div>
+      </div>
+
+      <input type="hidden" id="edit-alm-val">
+      <input type="hidden" id="edit-desc-orig">
+      <input type="hidden" id="edit-tipo-orig">
+      <input type="hidden" id="edit-qty-cur">
+
+      <div class="frow">
+        <div class="ff">
+          <label class="flbl">Nueva Categoría</label>
+          <select id="edit-tipo" class="fsel exc-sel-tipo" onchange="onTipoChange(this)">
+          </select>
+        </div>
+        <div class="ff">
+          <label class="flbl">Cantidad nueva <small>(dejar en 0 = sin cambio)</small></label>
+          <input id="edit-qty" class="fi" type="number" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="ff" style="margin-bottom:14px">
+        <label class="flbl">Nueva Descripción <small>(dejar vacío = sin cambio)</small></label>
+        <input id="edit-desc-new" class="fi" type="text" placeholder="Escribir nueva descripción...">
+      </div>
+
+      <div style="background:rgba(245,200,66,.07);border:1px solid rgba(245,200,66,.2);border-radius:5px;padding:10px 13px;font-size:10px;color:var(--amber);letter-spacing:1px">
+        ⚠ Los cambios se guardan como corrección — los datos originales quedan en el historial de operaciones.
+      </div>
+    </div>
+    <div class="mftr">
+      <div id="edit-ferr" class="ferr" style="flex:1"></div>
+      <button class="btn-cancel" onclick="cerrarModal('mod-edit')">CANCELAR</button>
+      <button class="btn-ok" style="background:var(--amber);color:#1a1000" onclick="saveEdit()">✓ GUARDAR CAMBIOS</button>
     </div>
   </div>
 </div>
@@ -621,20 +723,25 @@ const TB = {
 const baseData = BASE.filter(r=>r[3]>0).map(([a,t,d,q])=>({almacen:a,tipo:t,desc:d,qty:q}));
 
 /* ═══════════════ ESTADO ═══════════════ */
-let ops = [], extraAlm = [];
+let ops = [], extraAlm = [], extraCats = [], corrections = [];
+// corrections: [{almacen, descOrig, tipoOrig, newTipo, newDesc, qtyDelta, fecha}]
 let pendIng = [], pendTra = [];
 let fAlm='TODOS', fTipo='TODOS', fOp='TODOS', srch='';
 
 async function saveState() {
   try{
-    await window.storage.set('vierdes-ops', JSON.stringify(ops));
-    await window.storage.set('vierdes-alms',JSON.stringify(extraAlm));
+    await window.storage.set('vierdes-ops',  JSON.stringify(ops));
+    await window.storage.set('vierdes-alms', JSON.stringify(extraAlm));
+    await window.storage.set('vierdes-cats', JSON.stringify(extraCats));
+    await window.storage.set('vierdes-corr', JSON.stringify(corrections));
   }catch(e){}
 }
 async function loadState() {
   try{
     const o=await window.storage.get('vierdes-ops');  if(o) ops=JSON.parse(o.value);
     const a=await window.storage.get('vierdes-alms'); if(a) extraAlm=JSON.parse(a.value);
+    const ca=await window.storage.get('vierdes-cats'); if(ca) extraCats=JSON.parse(ca.value);
+    const co=await window.storage.get('vierdes-corr'); if(co) corrections=JSON.parse(co.value);
   }catch(e){}
 }
 
@@ -656,6 +763,25 @@ function getInv() {
         if(inv[kd]) inv[kd].qty+=it.qty;
         else inv[kd]={almacen:op.destino,tipo:it.tipo,desc:it.desc,qty:it.qty};
       });
+    }
+  });
+  // Aplicar correcciones (renombres y ajustes de cantidad)
+  corrections.forEach(cor=>{
+    const k=cor.almacen+'||'+cor.descOrig;
+    if(!inv[k]) return;
+    const item=inv[k];
+    const newDesc=cor.newDesc||item.desc;
+    const newTipo=cor.newTipo||item.tipo;
+    const newQty=Math.max(0, item.qty+(cor.qtyDelta||0));
+    // Si cambió la descripción, rekey
+    if(newDesc!==item.desc){
+      const kNew=cor.almacen+'||'+newDesc;
+      if(inv[kNew]) inv[kNew].qty+=newQty; // merge si ya existe el nuevo key
+      else inv[kNew]={almacen:cor.almacen,tipo:newTipo,desc:newDesc,qty:newQty};
+      inv[k].qty=0; // vaciar el original
+    } else {
+      item.tipo=newTipo;
+      item.qty=newQty;
     }
   });
   return Object.values(inv).filter(d=>d.qty>0);
@@ -696,7 +822,7 @@ function buildDonut(inv) {
     const x1=cx+r*Math.cos(ang),y1=cy+r*Math.sin(ang),x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
     const p=document.createElementNS('http://www.w3.org/2000/svg','path');
     p.setAttribute('d',`M${x1},${y1} A${r},${r} 0 ${lg} 1 ${x2},${y2}`);
-    p.setAttribute('fill','none'); p.setAttribute('stroke',TC[t]||'#888'); p.setAttribute('stroke-width',sw);
+    p.setAttribute('fill','none'); p.setAttribute('stroke',getTipoColor(t)); p.setAttribute('stroke-width',sw);
     svg.appendChild(p); ang=a2+.01;
     leg.innerHTML+=`<div class="leg-item"><div class="leg-dot" style="background:${TC[t]||'#888'}"></div><span>${t}</span><span class="leg-pct">${Math.round(pct*100)}%</span></div>`;
   });
@@ -724,7 +850,7 @@ function buildTopBars(inv){
   const s=[...inv].sort((a,b)=>b.qty-a.qty).slice(0,8),mx=s[0]?.qty||1;
   document.getElementById('top-bars').innerHTML=s.map(d=>`
     <div class="brow"><div class="blbl"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;font-size:10px">${d.desc}</span><span class="bqty">${d.qty}</span></div>
-    <div class="btrack"><div class="bfill" style="width:${d.qty/mx*100}%;--fc:${TC[d.tipo]||'#52a06a'}"></div></div></div>`).join('');
+    <div class="btrack"><div class="bfill" style="width:${d.qty/mx*100}%;--fc:${getTipoColor(d.tipo)}"></div></div></div>`).join('');
 }
 
 function buildEq(inv){
@@ -774,10 +900,13 @@ function renderInv(inv){
   document.getElementById('inv-tbody').innerHTML=f.map((d,i)=>`
     <tr>
       <td class="cm">${String(i+1).padStart(2,'0')}</td>
-      <td><span class="chip">${d.almacen}</span></td>
-      <td><span class="tipo-b" style="${TB[d.tipo]||''}">${d.tipo}</span></td>
-      <td class="cd">${d.desc}</td>
+      <td><span class="chip">${escH(d.almacen)}</span></td>
+      <td><span class="tipo-b" style="${getTipoBadge(d.tipo)}">${escH(d.tipo)}</span></td>
+      <td class="cd">${escH(d.desc)}</td>
       <td class="cn">${d.qty}</td>
+      <td style="text-align:right;padding-right:8px">
+        <button class="btn-edit-itm" onclick="openEditModal(${JSON.stringify(escH(d.almacen))},${JSON.stringify(escH(d.desc))})" title="Editar ítem">✏</button>
+      </td>
     </tr>`).join('');
 }
 
@@ -830,26 +959,205 @@ function delOp(id){
   saveState(); refresh();
 }
 
+/* ═══════════════ HELPERS ═══════════════ */
+const TIPOS_BASE = ['Herramientas','Equipos','Insumos','SSO','RRHH'];
+const TC_DOT = {Herramientas:'#52a06a',Equipos:'#6ab8e8',Insumos:'#f5c842',SSO:'#f0654a',RRHH:'#c09ef0'};
+
+function getTipos(){ return [...TIPOS_BASE,...extraCats]; }
+
+function getTipoColor(t){
+  const base={Herramientas:'#52a06a',Equipos:'#6ab8e8',Insumos:'#f5c842',SSO:'#f0654a',RRHH:'#c09ef0'};
+  return base[t]||'#8ab87a';
+}
+function getTipoBadge(t){
+  const base={
+    Herramientas:'background:#1a3d28;color:#6abf82',
+    Insumos:'background:#3a2c08;color:#f5c842',
+    Equipos:'background:#0e2035;color:#6ab8e8',
+    SSO:'background:#361008;color:#f07055',
+    RRHH:'background:#251540;color:#c09ef0',
+  };
+  return base[t]||'background:#1e2c1a;color:#a0d080';
+}
+
+function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+
+function tipoOpts(sel='Herramientas'){
+  const tipos=getTipos();
+  return tipos.map(t=>`<option value="${t}"${t===sel?' selected':''}>${t}</option>`).join('')+
+    `<option value="__nuevo_cat__">＋ Nueva categoría...</option>`;
+}
+
+// Maneja selección de "nueva categoría" en cualquier select de tipo dentro de un tr
+function onTipoChange(sel){
+  if(sel.value==='__nuevo_cat__'){
+    const nombre=prompt('Nombre de la nueva categoría:','');
+    if(nombre&&nombre.trim()){
+      const n=nombre.trim();
+      if(!getTipos().includes(n)){ extraCats.push(n); saveState(); }
+      // Actualizar todos los selects de tipo abiertos
+      document.querySelectorAll('.exc-sel-tipo').forEach(s=>{
+        if(![...s.options].some(o=>o.value===n)){
+          const o=document.createElement('option'); o.value=n; o.textContent=n;
+          s.insertBefore(o,s.querySelector('[value="__nuevo_cat__"]'));
+        }
+      });
+      sel.value=n;
+    } else {
+      sel.value=sel.dataset.prev||'Herramientas';
+    }
+  }
+  sel.dataset.prev=sel.value;
+}
+
+function allDescOpts(selectedDesc=''){
+  const inv=getInv();
+  const descs=[...new Set(inv.map(d=>d.desc))].sort();
+  return `<option value="">— Seleccionar o escribir —</option>`+
+    descs.map(d=>`<option value="${escH(d)}"${d===selectedDesc?' selected':''}>${escH(d)}</option>`).join('')+
+    `<option value="__nuevo__">＋ Nuevo material...</option>`;
+}
+
+/* ═══════════════ INGRESO — tabla Excel ═══════════════ */
+function addIngRow(){
+  const tbody=document.getElementById('ing-tbody');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td>
+      <select class="exc-sel exc-sel-tipo" onchange="onTipoChange(this)">${tipoOpts()}</select>
+    </td>
+    <td>
+      <select class="exc-sel" onchange="onIngDesc(this)">${allDescOpts()}</select>
+      <input class="exc-in-new" type="text" placeholder="Escribir nombre del nuevo material..." style="display:none">
+    </td>
+    <td>
+      <input class="exc-in" type="number" min="1" placeholder="0" style="text-align:right">
+    </td>
+    <td class="del-col">
+      <button class="exc-del" onclick="this.closest('tr').remove()" title="Eliminar fila">✕</button>
+    </td>`;
+  tbody.appendChild(tr);
+  tr.querySelector('.exc-in[type="number"]').focus();
+}
+
+function onIngDesc(sel){
+  const td=sel.closest('td');
+  const newInp=td.querySelector('.exc-in-new');
+  if(sel.value==='__nuevo__'){
+    newInp.style.display='block';
+    newInp.focus();
+  } else {
+    newInp.style.display='none';
+    if(sel.value){
+      const inv=getInv();
+      const found=inv.find(d=>d.desc===sel.value);
+      if(found){
+        const tipoSel=sel.closest('tr').querySelector('.exc-sel-tipo');
+        if(tipoSel){ tipoSel.value=found.tipo; tipoSel.dataset.prev=found.tipo; }
+      }
+      sel.closest('tr').querySelector('.exc-in[type="number"]').focus();
+    }
+  }
+}
+
+function getIngRows(){
+  const rows=[...document.getElementById('ing-tbody').rows];
+  const items=[], errors=[];
+  rows.forEach((tr,i)=>{
+    const tipoSel=tr.cells[0].querySelector('select');
+    const descSel=tr.cells[1].querySelector('select');
+    const newInp=tr.cells[1].querySelector('.exc-in-new');
+    const qtyInp=tr.cells[2].querySelector('input');
+    const tipo=tipoSel.value;
+    const desc=descSel.value==='__nuevo__'?newInp.value.trim():descSel.value;
+    const qty=parseInt(qtyInp.value);
+    if(!desc){ errors.push(`Fila ${i+1}: falta descripción`); return; }
+    if(!qty||qty<1){ errors.push(`Fila ${i+1}: cantidad inválida`); return; }
+    items.push({tipo,desc,qty});
+  });
+  return {items,errors};
+}
+
+/* ═══════════════ TRASLADO — tabla Excel ═══════════════ */
+function tipoOptsBasic(sel='Herramientas'){
+  return getTipos().map(t=>`<option value="${t}"${t===sel?' selected':''}>${t}</option>`).join('');
+}
+
+function allDescOptsBasic(selectedDesc=''){
+  const inv=getInv();
+  const descs=[...new Set(inv.map(d=>d.desc))].sort();
+  return `<option value="">— Seleccionar ítem —</option>`+
+    descs.map(d=>`<option value="${escH(d)}"${d===selectedDesc?' selected':''}>${escH(d)}</option>`).join('');
+}
+
+function addTraRow(){
+  const tbody=document.getElementById('tra-tbody');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td>
+      <select class="exc-sel" style="cursor:pointer">${tipoOptsBasic()}</select>
+    </td>
+    <td>
+      <select class="exc-sel" onchange="onTraDesc(this)">${allDescOptsBasic()}</select>
+    </td>
+    <td>
+      <input class="exc-in" type="number" min="1" placeholder="0" style="text-align:right">
+    </td>
+    <td class="del-col">
+      <button class="exc-del" onclick="this.closest('tr').remove()" title="Eliminar fila">✕</button>
+    </td>`;
+  tbody.appendChild(tr);
+  tr.querySelector('.exc-in[type="number"]').focus();
+}
+
+function onTraDesc(sel){
+  if(sel.value){
+    const inv=getInv();
+    const found=inv.find(d=>d.desc===sel.value);
+    if(found){
+      const tipoSel=sel.closest('tr').querySelector('select');
+      tipoSel.value=found.tipo;
+    }
+    sel.closest('tr').querySelector('.exc-in[type="number"]').focus();
+  }
+}
+
+function getTraRows(){
+  const rows=[...document.getElementById('tra-tbody').rows];
+  const items=[], errors=[];
+  rows.forEach((tr,i)=>{
+    const tipoSel=tr.cells[0].querySelector('select');
+    const descSel=tr.cells[1].querySelector('select');
+    const qtyInp=tr.cells[2].querySelector('input');
+    const tipo=tipoSel.value;
+    const desc=descSel.value;
+    const qty=parseInt(qtyInp.value);
+    if(!desc){ errors.push(`Fila ${i+1}: falta descripción`); return; }
+    if(!qty||qty<1){ errors.push(`Fila ${i+1}: cantidad inválida`); return; }
+    items.push({tipo,desc,qty});
+  });
+  return {items,errors};
+}
+
 /* ═══════════════ MODALES ═══════════════ */
 function abrirModal(tipo){
   if(tipo==='ing'){
-    pendIng=[];
     ['ing-alm','ing-resp','ing-guia'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('ing-desc').value='';
-    document.getElementById('ing-qty').value='';
     document.getElementById('ing-fecha').value=new Date().toISOString().split('T')[0];
     document.getElementById('ing-nwrap').style.display='none';
     document.getElementById('ing-ierr').textContent='';
     document.getElementById('ing-ferr').textContent='';
+    // Poblar almacenes
     const sel=document.getElementById('ing-alm');
     sel.innerHTML='<option value="">— Seleccionar —</option>';
-    getAllAlm().forEach(a=>sel.innerHTML+=`<option value="${a}">${a}</option>`);
+    getAllAlm().forEach(a=>sel.innerHTML+=`<option value="${a}">${escH(a)}</option>`);
     sel.innerHTML+='<option value="__nuevo__">＋ Nuevo almacén...</option>';
-    renderPend('ing');
+    // Tabla vacía con una fila inicial
+    document.getElementById('ing-tbody').innerHTML='';
+    addIngRow();
     document.getElementById('mod-ing').style.display='flex';
     setTimeout(()=>document.getElementById('ing-resp').focus(),80);
   } else {
-    pendTra=[];
     ['tra-orig','tra-dest','tra-resp','tra-guia'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('tra-nwrap').style.display='none';
     document.getElementById('tra-ierr').textContent='';
@@ -858,10 +1166,12 @@ function abrirModal(tipo){
     orig.innerHTML='<option value="">— Seleccionar —</option>';
     dest.innerHTML='<option value="">— Seleccionar —</option><option value="__nuevo__">＋ Nuevo almacén...</option>';
     getAllAlm().forEach(a=>{
-      orig.innerHTML+=`<option value="${a}">${a}</option>`;
-      dest.innerHTML+=`<option value="${a}">${a}</option>`;
+      orig.innerHTML+=`<option value="${a}">${escH(a)}</option>`;
+      dest.innerHTML+=`<option value="${a}">${escH(a)}</option>`;
     });
-    renderPend('tra');
+    // Tabla vacía con una fila inicial
+    document.getElementById('tra-tbody').innerHTML='';
+    addTraRow();
     document.getElementById('mod-tra').style.display='flex';
     setTimeout(()=>document.getElementById('tra-resp').focus(),80);
   }
@@ -874,15 +1184,6 @@ function onIngAlm(){
   const v=document.getElementById('ing-alm').value;
   document.getElementById('ing-nwrap').style.display=v==='__nuevo__'?'flex':'none';
   if(v==='__nuevo__') setTimeout(()=>document.getElementById('ing-ninp').focus(),50);
-}
-
-function onTraOrig(){
-  const orig=document.getElementById('tra-orig').value;
-  const sel=document.getElementById('tra-isel');
-  sel.innerHTML='<option value="">— Seleccionar ítem —</option>';
-  if(!orig) return;
-  getInv().filter(d=>d.almacen===orig&&d.qty>0).sort((a,b)=>a.desc.localeCompare(b.desc))
-          .forEach(d=>sel.innerHTML+=`<option value="${d.desc}||${d.tipo}">${d.desc} (${d.qty} disp.)</option>`);
 }
 
 function onTraDest(){
@@ -900,67 +1201,18 @@ function cnfNuevo(tipo){
     const opt=document.createElement('option'); opt.value=nombre; opt.textContent=nombre;
     sel.insertBefore(opt,sel.querySelector('[value="__nuevo__"]'));
   }
-  if(tipo==='ing'){
-    const origSel=document.getElementById('tra-orig');
-    if(![...origSel.options].some(o=>o.value===nombre)){
+  // Sync en el otro modal también
+  ['tra-orig','tra-dest','ing-alm'].forEach(id=>{
+    const s=document.getElementById(id);
+    if(s && ![...s.options].some(o=>o.value===nombre)){
       const o=document.createElement('option'); o.value=nombre; o.textContent=nombre;
-      origSel.appendChild(o);
+      const nv=s.querySelector('[value="__nuevo__"]');
+      if(nv) s.insertBefore(o,nv); else s.appendChild(o);
     }
-  }
+  });
   sel.value=nombre;
   document.getElementById(`${tipo}-nwrap`).style.display='none';
   inp.value=''; saveState();
-}
-
-/* ═══════════════ ÍTEMS PENDIENTES ═══════════════ */
-function addItm(tipo){
-  const errEl=document.getElementById(`${tipo}-ierr`);
-  errEl.textContent='';
-  if(tipo==='ing'){
-    const desc=document.getElementById('ing-desc').value.trim();
-    const t=document.getElementById('ing-tipo').value;
-    const qty=parseInt(document.getElementById('ing-qty').value);
-    if(!desc){errEl.textContent='Ingresa la descripción.';return}
-    if(!qty||qty<1){errEl.textContent='Cantidad inválida (≥1).';return}
-    const ex=pendIng.find(i=>i.desc===desc&&i.tipo===t);
-    if(ex) ex.qty+=qty; else pendIng.push({desc,tipo:t,qty});
-    document.getElementById('ing-desc').value='';
-    document.getElementById('ing-qty').value='';
-    document.getElementById('ing-desc').focus();
-  } else {
-    const sv=document.getElementById('tra-isel').value;
-    const qty=parseInt(document.getElementById('tra-qty').value);
-    if(!sv){errEl.textContent='Selecciona un ítem.';return}
-    if(!qty||qty<1){errEl.textContent='Cantidad inválida.';return}
-    const [desc,t]=sv.split('||');
-    const orig=document.getElementById('tra-orig').value;
-    const stock=getInv().find(d=>d.almacen===orig&&d.desc===desc);
-    const yaAgr=pendTra.filter(i=>i.desc===desc).reduce((s,i)=>s+i.qty,0);
-    const disp=(stock?stock.qty:0)-yaAgr;
-    if(qty>disp){errEl.textContent=`Stock insuficiente. Disponible: ${disp} unid.`;return}
-    const ex=pendTra.find(i=>i.desc===desc);
-    if(ex) ex.qty+=qty; else pendTra.push({desc,tipo:t,qty});
-    document.getElementById('tra-qty').value='';
-  }
-  renderPend(tipo);
-}
-
-function rmItm(tipo,idx){
-  if(tipo==='ing') pendIng.splice(idx,1); else pendTra.splice(idx,1);
-  renderPend(tipo);
-}
-
-function renderPend(tipo){
-  const items=tipo==='ing'?pendIng:pendTra;
-  const list=document.getElementById(`${tipo}-ilist`), empty=document.getElementById(`${tipo}-iempty`);
-  empty.style.display=items.length?'none':'block';
-  list.innerHTML=items.map((it,i)=>`
-    <div class="irow">
-      <div class="idesc">${it.desc}</div>
-      <div class="itipo">${it.tipo.toUpperCase()}</div>
-      <div class="iqty">${it.qty}</div>
-      <button class="idel" onclick="rmItm('${tipo}',${i})">✕</button>
-    </div>`).join('');
 }
 
 /* ═══════════════ SUBMIT ═══════════════ */
@@ -972,21 +1224,35 @@ function submitOp(tipo){
     const resp=document.getElementById('ing-resp').value.trim();
     const guia=document.getElementById('ing-guia').value.trim();
     const fecha=document.getElementById('ing-fecha').value;
-    if(!alm||alm==='__nuevo__'){errEl.textContent='Selecciona el almacén.';return}
-    if(!resp){errEl.textContent='Ingresa el responsable.';return}
-    if(!pendIng.length){errEl.textContent='Agrega al menos un ítem.';return}
-    ops.unshift({id:Date.now(),tipo:'INGRESO',fecha:fmtF(fecha),guia:guia||null,responsable:resp,almacen:alm,items:[...pendIng]});
+    if(!alm||alm==='__nuevo__'){errEl.textContent='Selecciona el almacén de destino.';return}
+    if(!resp){errEl.textContent='Ingresa el nombre del responsable.';return}
+    const {items,errors}=getIngRows();
+    if(errors.length){document.getElementById('ing-ierr').textContent=errors[0];return}
+    if(!items.length){errEl.textContent='Agrega al menos un ítem con descripción y cantidad.';return}
+    ops.unshift({id:Date.now(),tipo:'INGRESO',fecha:fmtF(fecha),guia:guia||null,responsable:resp,almacen:alm,items});
   } else {
     const orig=document.getElementById('tra-orig').value;
     const dest=document.getElementById('tra-dest').value;
     const resp=document.getElementById('tra-resp').value.trim();
     const guia=document.getElementById('tra-guia').value.trim();
-    if(!orig){errEl.textContent='Selecciona el origen.';return}
-    if(!dest||dest==='__nuevo__'){errEl.textContent='Selecciona o confirma el destino.';return}
+    if(!orig){errEl.textContent='Selecciona el almacén de origen.';return}
+    if(!dest||dest==='__nuevo__'){errEl.textContent='Selecciona o confirma el almacén de destino.';return}
     if(orig===dest){errEl.textContent='Origen y destino deben ser distintos.';return}
-    if(!resp){errEl.textContent='Ingresa el responsable.';return}
-    if(!pendTra.length){errEl.textContent='Agrega al menos un ítem.';return}
-    ops.unshift({id:Date.now(),tipo:'TRASLADO',fecha:fmtF(),guia:guia||null,responsable:resp,origen:orig,destino:dest,items:[...pendTra]});
+    if(!resp){errEl.textContent='Ingresa el nombre del responsable.';return}
+    const {items,errors}=getTraRows();
+    if(errors.length){document.getElementById('tra-ierr').textContent=errors[0];return}
+    if(!items.length){errEl.textContent='Agrega al menos un ítem con descripción y cantidad.';return}
+    // Validar stock en origen
+    const inv=getInv();
+    for(const it of items){
+      const stock=inv.find(d=>d.almacen===orig&&d.desc===it.desc);
+      const disp=stock?stock.qty:0;
+      if(it.qty>disp){
+        errEl.textContent=`"${it.desc}": stock insuficiente en origen. Disponible: ${disp}.`;
+        return;
+      }
+    }
+    ops.unshift({id:Date.now(),tipo:'TRASLADO',fecha:fmtF(),guia:guia||null,responsable:resp,origen:orig,destino:dest,items});
   }
   saveState();
   cerrarModal(tipo==='ing'?'mod-ing':'mod-tra');
@@ -997,6 +1263,83 @@ function fmtF(iso){
   const d=iso?new Date(iso+'T12:00:00'):new Date();
   return d.toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'})+
          ' '+new Date().toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* ═══════════════ EDICIÓN DE ÍTEMS ═══════════════ */
+function openEditModal(almacen, desc){
+  // Decodificar HTML entities que pueden venir del escH
+  const decAlm = almacen.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+  const decDesc= desc.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+
+  const inv=getInv();
+  const item=inv.find(d=>d.almacen===decAlm&&d.desc===decDesc);
+  if(!item){ alert('Ítem no encontrado en el inventario efectivo.'); return; }
+
+  document.getElementById('edit-alm-val').value=decAlm;
+  document.getElementById('edit-desc-orig').value=decDesc;
+  document.getElementById('edit-tipo-orig').value=item.tipo;
+  document.getElementById('edit-qty-cur').value=item.qty;
+
+  document.getElementById('edit-cur-alm').textContent=decAlm;
+  document.getElementById('edit-cur-tipo').textContent=item.tipo;
+  document.getElementById('edit-cur-desc').textContent=decDesc;
+  document.getElementById('edit-cur-qty').textContent=item.qty;
+  document.getElementById('edit-sub').textContent=decAlm+' — '+decDesc;
+
+  // Poblar select de tipos
+  const ts=document.getElementById('edit-tipo');
+  ts.innerHTML=tipoOpts(item.tipo);
+  ts.dataset.prev=item.tipo;
+
+  document.getElementById('edit-desc-new').value='';
+  document.getElementById('edit-qty').value='';
+  document.getElementById('edit-ferr').textContent='';
+
+  document.getElementById('mod-edit').style.display='flex';
+  setTimeout(()=>document.getElementById('edit-desc-new').focus(),80);
+}
+
+function saveEdit(){
+  const errEl=document.getElementById('edit-ferr');
+  errEl.textContent='';
+
+  const almacen  = document.getElementById('edit-alm-val').value;
+  const descOrig = document.getElementById('edit-desc-orig').value;
+  const tipoOrig = document.getElementById('edit-tipo-orig').value;
+  const qtyCur   = parseInt(document.getElementById('edit-qty-cur').value)||0;
+
+  const newTipo  = document.getElementById('edit-tipo').value;
+  const newDescV = document.getElementById('edit-desc-new').value.trim();
+  const newQtyV  = document.getElementById('edit-qty').value.trim();
+
+  if(newTipo==='__nuevo_cat__'){ errEl.textContent='Confirma la nueva categoría primero.'; return; }
+
+  const newDesc = newDescV||null;
+  const newQty  = newQtyV!==''?parseInt(newQtyV):null;
+
+  if(newQty!==null&&(isNaN(newQty)||newQty<0)){ errEl.textContent='Cantidad inválida (debe ser ≥ 0).'; return; }
+  if(!newDesc&&newTipo===tipoOrig&&newQty===null){ errEl.textContent='No hay ningún cambio para guardar.'; return; }
+
+  const qtyDelta = newQty!==null ? (newQty - qtyCur) : 0;
+
+  const cor={
+    almacen,
+    descOrig,
+    tipoOrig,
+    newTipo: newTipo!==tipoOrig?newTipo:null,
+    newDesc: newDesc||null,
+    qtyDelta,
+    fecha: new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'})+
+           ' '+new Date().toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'}),
+  };
+
+  // Si ya existe una corrección para este item, la reemplazamos
+  const existIdx=corrections.findIndex(x=>x.almacen===almacen&&x.descOrig===descOrig);
+  if(existIdx>=0) corrections[existIdx]=cor; else corrections.push(cor);
+
+  saveState();
+  cerrarModal('mod-edit');
+  refresh();
 }
 
 /* ═══════════════ TABS ═══════════════ */
