@@ -740,8 +740,7 @@ const TB = {
 const baseData = BASE.filter(r=>r[3]>0).map(([a,t,d,q])=>({almacen:a,tipo:t,desc:d,qty:q}));
 
 /* ═══════════════ ESTADO ═══════════════ */
-let ops = [], extraAlm = [], extraCats = [], corrections = [];
-// corrections: [{almacen, descOrig, tipoOrig, newTipo, newDesc, qtyDelta, fecha}]
+let ops = [], extraAlm = [], extraCats = [];
 let pendIng = [], pendTra = [];
 let fAlm='TODOS', fTipo='TODOS', fOp='TODOS', srch='';
 
@@ -750,7 +749,6 @@ async function saveState() {
     await window.storage.set('vierdes-ops',  JSON.stringify(ops));
     await window.storage.set('vierdes-alms', JSON.stringify(extraAlm));
     await window.storage.set('vierdes-cats', JSON.stringify(extraCats));
-    await window.storage.set('vierdes-corr', JSON.stringify(corrections));
   }catch(e){}
 }
 async function loadState() {
@@ -758,49 +756,52 @@ async function loadState() {
     const o=await window.storage.get('vierdes-ops');  if(o) ops=JSON.parse(o.value);
     const a=await window.storage.get('vierdes-alms'); if(a) extraAlm=JSON.parse(a.value);
     const ca=await window.storage.get('vierdes-cats'); if(ca) extraCats=JSON.parse(ca.value);
-    const co=await window.storage.get('vierdes-corr'); if(co) corrections=JSON.parse(co.value);
   }catch(e){}
 }
 
 /* ═══════════════ INVENTARIO EFECTIVO ═══════════════ */
 function getInv() {
   const inv={};
-  baseData.forEach(d=>{const k=d.almacen+'||'+d.desc; inv[k]={...d}});
-  ops.forEach(op=>{
+  baseData.forEach(d=>{ const k=d.almacen+'||'+d.desc; inv[k]={...d}; });
+
+  // Aplicar ops en orden cronológico (ops[0] es el más reciente → invertir)
+  [...ops].reverse().forEach(op=>{
     if(op.tipo==='INGRESO'){
-      op.items.forEach(it=>{
+      (op.items||[]).forEach(it=>{
         const k=op.almacen+'||'+it.desc;
         if(inv[k]) inv[k].qty+=it.qty;
         else inv[k]={almacen:op.almacen,tipo:it.tipo,desc:it.desc,qty:it.qty};
       });
-    } else {
-      op.items.forEach(it=>{
+
+    } else if(op.tipo==='MOVIMIENTO'){
+      (op.items||[]).forEach(it=>{
         const ko=op.origen+'||'+it.desc, kd=op.destino+'||'+it.desc;
         if(inv[ko]) inv[ko].qty=Math.max(0,inv[ko].qty-it.qty);
         if(inv[kd]) inv[kd].qty+=it.qty;
         else inv[kd]={almacen:op.destino,tipo:it.tipo,desc:it.desc,qty:it.qty};
       });
+
+    } else if(op.tipo==='MODIFICACION'){
+      // descOrig puede haber cambiado por una modificación anterior — buscar desc efectivo
+      const descBuscar=op.descOrig;
+      const k=op.almacen+'||'+descBuscar;
+      if(!inv[k]) return;
+      const item=inv[k];
+      const newDesc=op.newDesc||item.desc;
+      const newTipo=op.newTipo||item.tipo;
+      const newQty=Math.max(0, item.qty+(op.qtyDelta||0));
+      if(newDesc!==item.desc){
+        const kNew=op.almacen+'||'+newDesc;
+        if(inv[kNew]) inv[kNew].qty+=newQty;
+        else inv[kNew]={almacen:op.almacen,tipo:newTipo,desc:newDesc,qty:newQty};
+        inv[k].qty=0;
+      } else {
+        item.tipo=newTipo;
+        item.qty=newQty;
+      }
     }
   });
-  // Aplicar correcciones (renombres y ajustes de cantidad)
-  corrections.forEach(cor=>{
-    const k=cor.almacen+'||'+cor.descOrig;
-    if(!inv[k]) return;
-    const item=inv[k];
-    const newDesc=cor.newDesc||item.desc;
-    const newTipo=cor.newTipo||item.tipo;
-    const newQty=Math.max(0, item.qty+(cor.qtyDelta||0));
-    // Si cambió la descripción, rekey
-    if(newDesc!==item.desc){
-      const kNew=cor.almacen+'||'+newDesc;
-      if(inv[kNew]) inv[kNew].qty+=newQty; // merge si ya existe el nuevo key
-      else inv[kNew]={almacen:cor.almacen,tipo:newTipo,desc:newDesc,qty:newQty};
-      inv[k].qty=0; // vaciar el original
-    } else {
-      item.tipo=newTipo;
-      item.qty=newQty;
-    }
-  });
+
   return Object.values(inv).filter(d=>d.qty>0);
 }
 
@@ -980,10 +981,6 @@ function setOpF(f,btn){
 
 function delOp(id){
   if(!confirm('¿Anular esta operación? El inventario se revertirá.')) return;
-  const op=ops.find(o=>o.id===id);
-  if(op&&op.tipo==='MODIFICACION'){
-    corrections=corrections.filter(x=>!(x.almacen===op.almacen&&x.descOrig===(op.cambios.find(c=>c.campo==='Descripción')?.antes||op.almacen)));
-  }
   ops=ops.filter(o=>o.id!==id);
   saveState(); refresh();
 }
@@ -1363,12 +1360,11 @@ function saveEdit(){
   if(newTipo!==tipoOrig) cambios.push({campo:'Categoría',antes:tipoOrig,despues:newTipo});
   if(qtyDelta!==0) cambios.push({campo:'Cantidad',antes:qtyCur,despues:qtyCur+qtyDelta});
 
-  // Guardar corrección interna (para getInv)
-  const cor={almacen,descOrig,tipoOrig,newTipo:newTipo!==tipoOrig?newTipo:null,newDesc,qtyDelta};
-  const existIdx=corrections.findIndex(x=>x.almacen===almacen&&x.descOrig===descOrig);
-  if(existIdx>=0) corrections[existIdx]=cor; else corrections.push(cor);
+  // Registrar en ops (fuente única de verdad — getInv lo aplica automáticamente)
+  // Si ya existe una MODIFICACION previa para este ítem, la reemplazamos para evitar acumulación
+  const prevIdx=ops.findIndex(o=>o.tipo==='MODIFICACION'&&o.almacen===almacen&&o.descOrig===descOrig);
+  if(prevIdx>=0) ops.splice(prevIdx,1);
 
-  // Registrar en ops para historial
   ops.unshift({
     id: Date.now(),
     tipo: 'MODIFICACION',
@@ -1376,6 +1372,10 @@ function saveEdit(){
     guia: null,
     responsable: resp,
     almacen,
+    descOrig,          // clave para getInv
+    newTipo: newTipo!==tipoOrig ? newTipo : null,
+    newDesc: newDesc||null,
+    qtyDelta,
     obs: obs||null,
     cambios,
   });
