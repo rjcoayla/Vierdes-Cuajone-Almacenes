@@ -44,7 +44,7 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 /* ════════════ BOTONES ACCIÓN ════════════ */
 .btn-hdr{display:flex;align-items:center;gap:6px;border:2px solid;border-radius:6px;padding:7px 15px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;transition:all .2s;flex-shrink:0;white-space:nowrap;background:transparent}
 .btn-ing{border-color:var(--green2);color:var(--green3)}.btn-ing:hover{background:var(--green2);color:#f0f8ea;transform:translateY(-1px);box-shadow:0 4px 14px rgba(82,160,106,.35)}
-.btn-tra{border-color:var(--blue);color:var(--blue)}.btn-tra:hover{background:var(--blue);color:#fff;transform:translateY(-1px);box-shadow:0 4px 14px rgba(106,184,232,.3)}
+.btn-tra{border-color:var(--green2);color:var(--green3)}.btn-tra:hover{background:var(--green2);color:#f0f8ea;transform:translateY(-1px);box-shadow:0 4px 14px rgba(82,160,106,.35)}
 .btn-theme{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1.5px solid var(--border);border-radius:20px;padding:5px 11px 5px 9px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;transition:all .25s;flex-shrink:0}
 .btn-theme:hover{border-color:var(--green2)}
 .tog-track{width:28px;height:14px;background:var(--border);border-radius:7px;position:relative;transition:background .25s}
@@ -122,6 +122,7 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 .tipo-b{display:inline-block;padding:2px 8px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
 .op-b{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
 .op-ing{background:rgba(82,160,106,.14);color:#6abf82;border:1px solid rgba(82,160,106,.28)}
+.op-mod{background:rgba(245,200,66,.12);color:var(--amber);border:1px solid rgba(245,200,66,.25)}
 .op-tra{background:rgba(106,184,232,.12);color:#6ab8e8;border:1px solid rgba(106,184,232,.22)}
 
 /* ════════════ TOOLBAR ════════════ */
@@ -294,7 +295,7 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
   </div>
   <div class="header-right">
     <button class="btn-hdr btn-ing" onclick="abrirModal('ing')">＋ INGRESO</button>
-    <button class="btn-hdr btn-tra" onclick="abrirModal('tra')">⇄ TRASLADO</button>
+    <button class="btn-hdr btn-tra" onclick="abrirModal('tra')">⇄ MOVIMIENTOS</button>
     <button class="btn-theme" onclick="togTheme()" id="tbtn">
       <span id="ticon">🌙</span>
       <div class="tog-track"></div>
@@ -321,7 +322,7 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
     <div class="kpi fade-in" style="--accent:var(--green3)"><span class="kpi-ico">🔢</span><div class="kpi-lbl">Total Unidades</div><div class="kpi-val" id="k-units">—</div><div class="kpi-sub">unidades en stock</div></div>
     <div class="kpi fade-in" style="--accent:var(--blue)"><span class="kpi-ico">🏪</span><div class="kpi-lbl">Almacenes</div><div class="kpi-val" id="k-alm">—</div><div class="kpi-sub">ubicaciones activas</div></div>
     <div class="kpi fade-in" style="--accent:var(--amber)"><span class="kpi-ico">⚙️</span><div class="kpi-lbl">Equipos</div><div class="kpi-val" id="k-equip">—</div><div class="kpi-sub">unidades motorizadas</div></div>
-    <div class="kpi fade-in" style="--accent:var(--red)"><span class="kpi-ico">📋</span><div class="kpi-lbl">Operaciones</div><div class="kpi-val" id="k-ops">0</div><div class="kpi-sub">ingresos + traslados</div></div>
+    <div class="kpi fade-in" style="--accent:var(--red)"><span class="kpi-ico">📋</span><div class="kpi-lbl">Operaciones</div><div class="kpi-val" id="k-ops">0</div><div class="kpi-sub">ingresos + movimientos</div></div>
   </div>
 
   <div class="g3">
@@ -383,7 +384,8 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
       <span class="tbar-lbl">Filtrar:</span>
       <button class="fb on-g" onclick="setOpF('TODOS',this)">Todas</button>
       <button class="fb" onclick="setOpF('INGRESO',this)">Solo Ingresos</button>
-      <button class="fb" onclick="setOpF('TRASLADO',this)">Solo Traslados</button>
+      <button class="fb" onclick="setOpF('MOVIMIENTO',this)">Solo Movimientos</button>
+      <button class="fb" onclick="setOpF('MODIFICACION',this)">Solo Modificaciones</button>
     </div>
     <div class="twrap" style="max-height:600px">
       <table class="tbl">
@@ -464,12 +466,12 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
   </div>
 </div>
 
-<!-- ═══════ MODAL TRASLADO ═══════ -->
+<!-- ═══════ MODAL MOVIMIENTO ═══════ -->
 <div id="mod-tra" class="overlay" style="display:none" onclick="ovClick(event,'mod-tra')">
   <div class="modal">
     <div class="mhdr">
-      <div><div class="mtitle" style="color:var(--blue)">⇄ TRASLADO ENTRE ALMACENES</div>
-        <div class="msub">Registrar movimiento de materiales entre ubicaciones</div></div>
+      <div><div class="mtitle" style="color:var(--green3)">⇄ MOVIMIENTO ENTRE ALMACENES</div>
+        <div class="msub">Registrar movimiento entre almacenes</div></div>
       <button class="mclose" onclick="cerrarModal('mod-tra')">✕</button>
     </div>
     <div class="mbody">
@@ -531,7 +533,7 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
     <div class="mftr">
       <div id="tra-ferr" class="ferr" style="flex:1"></div>
       <button class="btn-cancel" onclick="cerrarModal('mod-tra')">CANCELAR</button>
-      <button class="btn-ok blue" onclick="submitOp('tra')">✓ REGISTRAR TRASLADO</button>
+      <button class="btn-ok" onclick="submitOp('tra')">✓ REGISTRAR MOVIMIENTO</button>
     </div>
   </div>
 </div>
@@ -579,8 +581,23 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
         <input id="edit-desc-new" class="fi" type="text" placeholder="Escribir nueva descripción...">
       </div>
 
+      <div class="ff" style="margin-bottom:14px">
+        <label class="flbl">Responsable *</label>
+        <select id="edit-resp" class="fsel">
+          <option value="">— Seleccionar responsable —</option>
+          <option value="Alfredo Roque">Alfredo Roque</option>
+          <option value="Cristhian Mamani">Cristhian Mamani</option>
+          <option value="Dennis Choque">Dennis Choque</option>
+          <option value="René Coayla">René Coayla</option>
+          <option value="Rodrigo Quiroga">Rodrigo Quiroga</option>
+        </select>
+      </div>
+      <div class="ff" style="margin-bottom:14px">
+        <label class="flbl">Observación <small>(opcional)</small></label>
+        <input id="edit-obs" class="fi" type="text" placeholder="Motivo del cambio...">
+      </div>
       <div style="background:rgba(245,200,66,.07);border:1px solid rgba(245,200,66,.2);border-radius:5px;padding:10px 13px;font-size:10px;color:var(--amber);letter-spacing:1px">
-        ⚠ Los cambios se guardan como corrección — los datos originales quedan en el historial de operaciones.
+        ⚠ Esta modificación quedará registrada en el historial de Operaciones.
       </div>
     </div>
     <div class="mftr">
@@ -905,7 +922,7 @@ function renderInv(inv){
       <td class="cd">${escH(d.desc)}</td>
       <td class="cn">${d.qty}</td>
       <td style="text-align:right;padding-right:8px">
-        <button class="btn-edit-itm" onclick="openEditModal(${JSON.stringify(escH(d.almacen))},${JSON.stringify(escH(d.desc))})" title="Editar ítem">✏</button>
+        <button class="btn-edit-itm" data-alm="${escH(d.almacen)}" data-desc="${escH(d.desc)}" onclick="openEditModal(this.dataset.alm,this.dataset.desc)" title="Editar nomenclatura">✏</button>
       </td>
     </tr>`).join('');
 }
@@ -926,13 +943,21 @@ function renderOps(){
   if(!filt.length){document.getElementById('op-tbody').innerHTML='';document.getElementById('op-empty').style.display='block';return}
   document.getElementById('op-empty').style.display='none';
   document.getElementById('op-tbody').innerHTML=filt.map((op,i)=>{
-    const almCol=op.tipo==='TRASLADO'
-      ?`<span class="chip">${op.origen}</span> → <span class="chip chip-d">${op.destino}</span>`
-      :`<span class="chip chip-d">${op.almacen}</span>`;
-    const btype=op.tipo==='INGRESO'
-      ?`<span class="op-b op-ing">▲ INGRESO</span>`
-      :`<span class="op-b op-tra">⇄ TRASLADO</span>`;
-    const its=op.items.map(it=>`<span style="display:block;font-size:10px;color:var(--text2)">· ${it.desc} <strong style="color:var(--lime)">(${it.qty})</strong></span>`).join('');
+    let almCol, btype, detalle;
+    if(op.tipo==='MOVIMIENTO'){
+      almCol=`<span class="chip">${escH(op.origen)}</span> → <span class="chip chip-d">${escH(op.destino)}</span>`;
+      btype=`<span class="op-b op-tra">⇄ MOV.</span>`;
+      detalle=op.items.map(it=>`<span style="display:block;font-size:10px;color:var(--text2)">· ${escH(it.desc)} <strong style="color:var(--lime)">(${it.qty})</strong></span>`).join('');
+    } else if(op.tipo==='MODIFICACION'){
+      almCol=`<span class="chip chip-d">${escH(op.almacen)}</span>`;
+      btype=`<span class="op-b op-mod">✏ MODIF.</span>`;
+      detalle=op.cambios.map(c=>`<span style="display:block;font-size:10px;color:var(--text2)">· ${c.campo}: <span style="color:var(--red)">${escH(String(c.antes))}</span> → <span style="color:var(--lime)">${escH(String(c.despues))}</span></span>`).join('')
+        +(op.obs?`<span style="display:block;font-size:10px;color:var(--text4);font-style:italic">obs: ${escH(op.obs)}</span>`:'');
+    } else {
+      almCol=`<span class="chip chip-d">${escH(op.almacen)}</span>`;
+      btype=`<span class="op-b op-ing">▲ ING.</span>`;
+      detalle=(op.items||[]).map(it=>`<span style="display:block;font-size:10px;color:var(--text2)">· ${escH(it.desc)} <strong style="color:var(--lime)">(${it.qty})</strong></span>`).join('');
+    }
     return `<tr>
       <td class="cm">${String(filt.length-i).padStart(2,'0')}</td>
       <td style="font-size:10px;white-space:nowrap;color:var(--text2)">${op.fecha}</td>
@@ -940,7 +965,7 @@ function renderOps(){
       <td style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--amber)">${op.guia||'—'}</td>
       <td style="color:var(--text)">${op.responsable}</td>
       <td>${almCol}</td>
-      <td>${its}</td>
+      <td>${detalle}</td>
       <td style="text-align:right"><button class="btn-anl" onclick="delOp(${op.id})">✕ ANULAR</button></td>
     </tr>`;
   }).join('');
@@ -955,6 +980,10 @@ function setOpF(f,btn){
 
 function delOp(id){
   if(!confirm('¿Anular esta operación? El inventario se revertirá.')) return;
+  const op=ops.find(o=>o.id===id);
+  if(op&&op.tipo==='MODIFICACION'){
+    corrections=corrections.filter(x=>!(x.almacen===op.almacen&&x.descOrig===(op.cambios.find(c=>c.campo==='Descripción')?.antes||op.almacen)));
+  }
   ops=ops.filter(o=>o.id!==id);
   saveState(); refresh();
 }
@@ -1078,7 +1107,7 @@ function getIngRows(){
   return {items,errors};
 }
 
-/* ═══════════════ TRASLADO — tabla Excel ═══════════════ */
+/* ═══════════════ MOVIMIENTO — tabla Excel ═══════════════ */
 function tipoOptsBasic(sel='Herramientas'){
   return getTipos().map(t=>`<option value="${t}"${t===sel?' selected':''}>${t}</option>`).join('');
 }
@@ -1252,7 +1281,7 @@ function submitOp(tipo){
         return;
       }
     }
-    ops.unshift({id:Date.now(),tipo:'TRASLADO',fecha:fmtF(),guia:guia||null,responsable:resp,origen:orig,destino:dest,items});
+    ops.unshift({id:Date.now(),tipo:'MOVIMIENTO',fecha:fmtF(),guia:guia||null,responsable:resp,origen:orig,destino:dest,items});
   }
   saveState();
   cerrarModal(tipo==='ing'?'mod-ing':'mod-tra');
@@ -1267,13 +1296,14 @@ function fmtF(iso){
 
 /* ═══════════════ EDICIÓN DE ÍTEMS ═══════════════ */
 function openEditModal(almacen, desc){
-  // Decodificar HTML entities que pueden venir del escH
-  const decAlm = almacen.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
-  const decDesc= desc.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+  // dataset.alm/desc vienen como HTML-entities del template literal — decodificar
+  const tmp=document.createElement('div');
+  tmp.innerHTML=almacen; const decAlm=tmp.textContent;
+  tmp.innerHTML=desc;    const decDesc=tmp.textContent;
 
   const inv=getInv();
   const item=inv.find(d=>d.almacen===decAlm&&d.desc===decDesc);
-  if(!item){ alert('Ítem no encontrado en el inventario efectivo.'); return; }
+  if(!item){ alert('Ítem no encontrado.\nAlmacén: '+decAlm+'\nDesc: '+decDesc); return; }
 
   document.getElementById('edit-alm-val').value=decAlm;
   document.getElementById('edit-desc-orig').value=decDesc;
@@ -1293,6 +1323,8 @@ function openEditModal(almacen, desc){
 
   document.getElementById('edit-desc-new').value='';
   document.getElementById('edit-qty').value='';
+  document.getElementById('edit-resp').value='';
+  document.getElementById('edit-obs').value='';
   document.getElementById('edit-ferr').textContent='';
 
   document.getElementById('mod-edit').style.display='flex';
@@ -1311,8 +1343,11 @@ function saveEdit(){
   const newTipo  = document.getElementById('edit-tipo').value;
   const newDescV = document.getElementById('edit-desc-new').value.trim();
   const newQtyV  = document.getElementById('edit-qty').value.trim();
+  const resp     = document.getElementById('edit-resp').value;
+  const obs      = document.getElementById('edit-obs').value.trim();
 
   if(newTipo==='__nuevo_cat__'){ errEl.textContent='Confirma la nueva categoría primero.'; return; }
+  if(!resp){ errEl.textContent='Selecciona el responsable.'; return; }
 
   const newDesc = newDescV||null;
   const newQty  = newQtyV!==''?parseInt(newQtyV):null;
@@ -1322,20 +1357,28 @@ function saveEdit(){
 
   const qtyDelta = newQty!==null ? (newQty - qtyCur) : 0;
 
-  const cor={
-    almacen,
-    descOrig,
-    tipoOrig,
-    newTipo: newTipo!==tipoOrig?newTipo:null,
-    newDesc: newDesc||null,
-    qtyDelta,
-    fecha: new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'})+
-           ' '+new Date().toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'}),
-  };
+  // Resumen de cambios para mostrar en operaciones
+  const cambios=[];
+  if(newDesc) cambios.push({campo:'Descripción',antes:descOrig,despues:newDesc});
+  if(newTipo!==tipoOrig) cambios.push({campo:'Categoría',antes:tipoOrig,despues:newTipo});
+  if(qtyDelta!==0) cambios.push({campo:'Cantidad',antes:qtyCur,despues:qtyCur+qtyDelta});
 
-  // Si ya existe una corrección para este item, la reemplazamos
+  // Guardar corrección interna (para getInv)
+  const cor={almacen,descOrig,tipoOrig,newTipo:newTipo!==tipoOrig?newTipo:null,newDesc,qtyDelta};
   const existIdx=corrections.findIndex(x=>x.almacen===almacen&&x.descOrig===descOrig);
   if(existIdx>=0) corrections[existIdx]=cor; else corrections.push(cor);
+
+  // Registrar en ops para historial
+  ops.unshift({
+    id: Date.now(),
+    tipo: 'MODIFICACION',
+    fecha: fmtF(),
+    guia: null,
+    responsable: resp,
+    almacen,
+    obs: obs||null,
+    cambios,
+  });
 
   saveState();
   cerrarModal('mod-edit');
