@@ -373,8 +373,8 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
       <span id="tlbl">OSCURO</span>
     </button>
     <div class="header-date">
-      <strong>10 / MAR / 2026</strong>
-      ACTUALIZACIÓN
+      <strong id="hdr-fecha">—</strong>
+      ÚLT. OPERACIÓN
     </div>
   </div>
 </header>
@@ -1003,6 +1003,9 @@ function refresh() {
   document.getElementById('tc-inv').textContent=inv.length;
   document.getElementById('tc-op').textContent=ops.length;
   buildDonut(inv); buildAlmBars(inv); buildTopBars(inv); buildEq(inv);
+  // Fecha última operación
+  const lastOp = ops.find(o=>o.tipo!=='LEVANTAMIENTO') || ops[0];
+  document.getElementById('hdr-fecha').textContent = lastOp ? lastOp.fecha : '—';
   buildAlmToolbar(); buildTipoToolbar(inv); renderInv(inv); renderOps(); renderLevantamientos();
 }
 
