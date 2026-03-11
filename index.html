@@ -50,8 +50,24 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 .header-date strong{display:block;color:var(--text3);font-size:15px;letter-spacing:2px}
 
 /* ════════════ BOTONES ACCIÓN ════════════ */
+/* ════ ACCIONES DROPDOWN ════ */
+.acc-wrap{position:relative;flex-shrink:0}
+.btn-acc{display:flex;align-items:center;gap:7px;border:2px solid var(--green2);border-radius:6px;padding:8px 16px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;transition:all .2s;white-space:nowrap;background:var(--green2);color:#f0f8ea}
+.btn-acc:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 4px 14px rgba(82,160,106,.35)}
+#acc-arrow{transition:transform .2s;display:inline-block;font-size:11px}
+.acc-wrap.open #acc-arrow{transform:rotate(180deg)}
+.acc-menu{display:none;position:fixed;top:70px;left:50%;transform:translateX(-50%);width:min(300px,90vw);background:var(--bg3);border:1.5px solid var(--border2);border-radius:9px;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:1000;overflow:hidden;animation:fadeUp .15s ease}
+.acc-wrap.open .acc-menu{display:block}
+.acc-item{display:flex;align-items:center;gap:14px;width:100%;padding:13px 16px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;text-align:left;transition:background .15s;color:var(--text)}
+.acc-item:last-child{border-bottom:none}
+.acc-item:hover{background:var(--bg4)}
+.acc-ico{font-size:20px;width:26px;flex-shrink:0;text-align:center}
+.acc-name{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;color:var(--text);text-transform:uppercase}
+.acc-sub{font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:0;text-transform:none;font-family:'JetBrains Mono',monospace}
+
 .btn-hdr{display:flex;align-items:center;gap:6px;border:2px solid;border-radius:6px;padding:7px 15px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;transition:all .2s;flex-shrink:0;white-space:nowrap;background:transparent}
 .btn-ing{border-color:var(--green2);color:var(--green3)}.btn-ing:hover{background:var(--green2);color:#f0f8ea;transform:translateY(-1px);box-shadow:0 4px 14px rgba(82,160,106,.35)}
+.btn-lev{border-color:var(--amber);color:var(--amber)}.btn-lev:hover{background:var(--amber);color:#1a1000;transform:translateY(-1px)}
 .btn-tra{border-color:var(--green2);color:var(--green3)}.btn-tra:hover{background:var(--green2);color:#f0f8ea;transform:translateY(-1px);box-shadow:0 4px 14px rgba(82,160,106,.35)}
 .btn-theme{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1.5px solid var(--border);border-radius:20px;padding:5px 11px 5px 9px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;transition:all .25s;flex-shrink:0}
 .btn-theme:hover{border-color:var(--green2)}
@@ -132,6 +148,7 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 .op-ing{background:rgba(82,160,106,.14);color:#6abf82;border:1px solid rgba(82,160,106,.28)}
 .op-mod{background:rgba(245,200,66,.12);color:var(--amber);border:1px solid rgba(245,200,66,.25)}
 .op-del{background:rgba(240,101,74,.12);color:var(--red);border:1px solid rgba(240,101,74,.25)}
+.op-lev{background:rgba(245,200,66,.12);color:var(--amber);border:1px solid rgba(245,200,66,.25)}
 .op-tra{background:rgba(106,184,232,.12);color:#6ab8e8;border:1px solid rgba(106,184,232,.22)}
 
 /* ════════════ TOOLBAR ════════════ */
@@ -233,6 +250,24 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 .exc-scroll{max-height:260px;overflow-y:auto}
 .exc-tipo-dot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px;vertical-align:middle}
 
+/* ════ LEVANTAMIENTO ════ */
+.lev-inp{width:72px;text-align:center;background:var(--bg2);border:1.5px solid var(--border);border-radius:4px;padding:6px 4px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;transition:border-color .15s}
+.lev-inp:focus{border-color:var(--amber)}
+.lev-inp.ok{border-color:var(--green2);background:rgba(82,160,106,.08)}
+.lev-chk{width:22px;height:22px;accent-color:var(--green2);cursor:pointer;transform:scale(1.2)}
+.lev-ok td{background:rgba(82,160,106,.05)!important}
+.lev-falt td{background:rgba(240,101,74,.06)!important}
+.lev-sob td{background:rgba(245,200,66,.06)!important}
+.dif-neg{color:var(--red);font-weight:700;font-family:'Barlow Condensed',sans-serif;font-size:15px}
+.dif-pos{color:var(--lime);font-weight:700;font-family:'Barlow Condensed',sans-serif;font-size:15px}
+.dif-zero{color:var(--green2);font-size:13px}
+.lev-card{border:1px solid var(--border);border-radius:7px;margin-bottom:18px;overflow:hidden}
+.lev-card-hdr{background:var(--bg4);padding:11px 15px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;display:flex;justify-content:space-between;align-items:center}
+.lev-card-body{padding:13px 15px}
+.lev-hist-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);gap:12px}
+.lev-hist-row:last-child{border-bottom:none}
+.op-lev{background:rgba(245,200,66,.12);color:var(--amber);border:1px solid rgba(245,200,66,.25)}
+
 /* ════ TOAST ════ */
 #toast{position:fixed;bottom:28px;right:28px;background:var(--bg4);border:1.5px solid var(--green2);color:var(--green3);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;padding:11px 20px;border-radius:7px;box-shadow:0 4px 18px rgba(0,0,0,.35);z-index:9999;opacity:0;transform:translateY(10px);transition:opacity .25s,transform .25s;pointer-events:none}
 #toast.show{opacity:1;transform:translateY(0)}
@@ -311,8 +346,25 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
     </div>
   </div>
   <div class="header-right">
-    <button class="btn-hdr btn-ing" onclick="abrirModal('ing')">＋ INGRESO</button>
-    <button class="btn-hdr btn-tra" onclick="abrirModal('tra')">⇄ MOVIMIENTOS</button>
+    <div class="acc-wrap" id="acc-wrap">
+      <button class="btn-acc" onclick="togAcciones()" id="acc-btn">
+        ACCIONES <span id="acc-arrow">▾</span>
+      </button>
+      <div class="acc-menu" id="acc-menu">
+        <button class="acc-item" onclick="abrirModal('ing');cerrarAcciones()">
+          <span class="acc-ico" style="color:var(--green2)">＋</span>
+          <div><div class="acc-name">Ingresar material</div><div class="acc-sub">Registrar entrada de ítems al almacén</div></div>
+        </button>
+        <button class="acc-item" onclick="abrirModal('tra');cerrarAcciones()">
+          <span class="acc-ico" style="color:var(--blue)">⇄</span>
+          <div><div class="acc-name">Realizar movimiento</div><div class="acc-sub">Transferir ítems entre almacenes</div></div>
+        </button>
+        <button class="acc-item" onclick="abrirLevantamiento();cerrarAcciones()">
+          <span class="acc-ico" style="color:var(--amber)">📋</span>
+          <div><div class="acc-name">Levantar inventario</div><div class="acc-sub">Conteo físico y ajuste de diferencias</div></div>
+        </button>
+      </div>
+    </div>
     <button class="btn-theme" onclick="togTheme()" id="tbtn">
       <span id="ticon">🌙</span>
       <div class="tog-track"></div>
@@ -329,6 +381,7 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
 <nav class="tabs">
   <button class="tab active" onclick="swTab('resumen',this)">📊 RESUMEN</button>
   <button class="tab" onclick="swTab('inventario',this)">📦 INVENTARIO <span class="tab-ct" id="tc-inv">—</span></button>
+  <button class="tab" onclick="swTab('levantamiento',this)">📋 LEVANTAMIENTO <span class="tab-ct" id="tc-lev">—</span></button>
   <button class="tab" onclick="swTab('operaciones',this)">📋 OPERACIONES <span class="tab-ct" id="tc-op">0</span></button>
 </nav>
 
@@ -383,6 +436,21 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
   </div>
 </div>
 
+
+<!-- ═══════ TAB LEVANTAMIENTO ═══════ -->
+<div class="pane" id="tab-levantamiento">
+  <div class="panel">
+    <div class="phdr">
+      <h2>Levantamientos de Inventario</h2>
+      <span class="pbadge" id="lev-badge">—</span>
+    </div>
+    <div id="lev-list-wrap">
+      <div class="emsg" id="lev-empty" style="padding:40px">No hay levantamientos registrados aún.</div>
+      <div id="lev-list"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════ TAB OPERACIONES ═══════ -->
 <div class="pane" id="tab-operaciones">
   <div class="panel">
@@ -393,6 +461,7 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
       <button class="fb" onclick="setOpF('INGRESO',this)">Solo Ingresos</button>
       <button class="fb" onclick="setOpF('MOVIMIENTO',this)">Solo Movimientos</button>
       <button class="fb" onclick="setOpF('MODIFICACION',this)">Solo Modificaciones</button>
+      <button class="fb" onclick="setOpF('LEVANTAMIENTO',this)">Levantamientos</button>
     </div>
     <div class="twrap" style="max-height:600px">
       <table class="tbl">
@@ -621,6 +690,102 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
   <span>Desarrollado por <strong>René J. Coayla Causillas</strong></span>
   <span>10.03.2026</span>
 </footer>
+
+<!-- ═══════ MODAL LEVANTAMIENTO ═══════ -->
+<div id="mod-lev" class="overlay" style="display:none" onclick="ovClick(event,'mod-lev')">
+  <div class="modal" style="max-width:760px;max-height:90vh">
+    <div class="mhdr">
+      <div>
+        <div class="mtitle" style="color:var(--amber)">📋 LEVANTAMIENTO DE INVENTARIO</div>
+        <div class="msub" id="lev-step-label">Paso 1 de 3 — Configurar</div>
+      </div>
+      <button class="mclose" onclick="cerrarModal('mod-lev')">✕</button>
+    </div>
+
+    <!-- PASO 1: Configurar -->
+    <div id="lev-paso1" class="mbody">
+      <div class="frow">
+        <div class="ff">
+          <label class="flbl">Almacén a levantar *</label>
+          <select id="lev-alm" class="fsel">
+            <option value="">— Seleccionar almacén —</option>
+          </select>
+        </div>
+        <div class="ff">
+          <label class="flbl">Responsable *</label>
+          <select id="lev-resp" class="fsel">
+            <option value="">— Seleccionar —</option>
+            <option value="Alfredo Roque">Alfredo Roque</option>
+            <option value="Cristhian Mamani">Cristhian Mamani</option>
+            <option value="Dennis Choque">Dennis Choque</option>
+            <option value="René Coayla">René Coayla</option>
+            <option value="Rodrigo Quiroga">Rodrigo Quiroga</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="ff">
+          <label class="flbl">Fecha del levantamiento</label>
+          <input id="lev-fecha" class="fi" type="date">
+        </div>
+        <div class="ff">
+          <label class="flbl">Observación general <small>(opcional)</small></label>
+          <input id="lev-obs" class="fi" type="text" placeholder="Ej: Inventario mensual marzo 2026">
+        </div>
+      </div>
+      <div style="background:rgba(245,200,66,.07);border:1px solid rgba(245,200,66,.18);border-radius:6px;padding:12px 15px;font-size:11px;color:var(--text2);line-height:1.7">
+        📌 Se mostrarán todos los ítems del almacén seleccionado con su cantidad actual en el sistema. 
+        Para cada ítem podrás ingresar la cantidad física contada. Al final verás las diferencias y podrás decidir si ajustar el inventario.
+      </div>
+    </div>
+
+    <!-- PASO 2: Conteo -->
+    <div id="lev-paso2" style="display:none;flex-direction:column;overflow:hidden">
+      <div style="padding:14px 20px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span id="lev-p2-title" style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:var(--amber)">CONTANDO: —</span>
+        <span id="lev-p2-prog" style="font-size:10px;color:var(--text4)">0 / 0 ítems revisados</span>
+        <button class="btn-c" style="margin-left:auto;font-size:10px;padding:5px 10px" onclick="marcarTodosOk()">✓ Todos correctos</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;max-height:calc(90vh - 280px)">
+        <table class="tbl" id="lev-tbl">
+          <thead><tr>
+            <th style="width:36px">#</th>
+            <th>Descripción</th>
+            <th style="width:90px;text-align:center">Categoría</th>
+            <th style="width:80px;text-align:center">En Sistema</th>
+            <th style="width:110px;text-align:center">Contado</th>
+            <th style="width:90px;text-align:center">Diferencia</th>
+          </tr></thead>
+          <tbody id="lev-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PASO 3: Resumen diferencias -->
+    <div id="lev-paso3" style="display:none;flex-direction:column;overflow:hidden">
+      <div style="padding:14px 20px 8px;border-bottom:1px solid var(--border)">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:var(--amber)">RESUMEN DE DIFERENCIAS</span>
+      </div>
+      <div style="overflow-y:auto;flex:1;max-height:calc(90vh - 260px);padding:16px">
+        <div id="lev-resumen"></div>
+      </div>
+    </div>
+
+    <div class="mftr">
+      <div id="lev-ferr" class="ferr" style="flex:1"></div>
+      <!-- Paso 1 -->
+      <button id="lev-btn-p1" class="btn-ok" style="background:var(--amber);color:#1a1000" onclick="levPaso2()">INICIAR CONTEO →</button>
+      <!-- Paso 2 -->
+      <button id="lev-btn-p2a" class="btn-cancel" style="display:none" onclick="levPaso1()">← VOLVER</button>
+      <button id="lev-btn-p2b" class="btn-ok" style="display:none;background:var(--amber);color:#1a1000" onclick="levPaso3()">VER DIFERENCIAS →</button>
+      <!-- Paso 3 -->
+      <button id="lev-btn-p3a" class="btn-cancel" style="display:none" onclick="levPaso2Volver()">← VOLVER A CONTEO</button>
+      <button id="lev-btn-p3b" class="btn-ok" style="display:none;background:var(--blue);color:#fff" onclick="guardarLev(false)">📋 SOLO REGISTRAR</button>
+      <button id="lev-btn-p3c" class="btn-ok" style="display:none;background:var(--green3);color:#f0f8ea" onclick="guardarLev(true)">✓ REGISTRAR Y AJUSTAR INVENTARIO</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 </div><!-- #app -->
 
@@ -749,7 +914,7 @@ const TB = {
 const baseData = BASE.filter(r=>r[3]>0).map(([a,t,d,q])=>({almacen:a,tipo:t,desc:d,qty:q}));
 
 /* ═══════════════ ESTADO ═══════════════ */
-let ops = [], extraAlm = [], extraCats = [];
+let ops = [], extraAlm = [], extraCats = [], levantamientos = [];
 let pendIng = [], pendTra = [];
 let fAlm='TODOS', fTipo='TODOS', fOp='TODOS', srch='';
 
@@ -758,6 +923,7 @@ function saveState() {
     localStorage.setItem('vierdes-ops',  JSON.stringify(ops));
     localStorage.setItem('vierdes-alms', JSON.stringify(extraAlm));
     localStorage.setItem('vierdes-cats', JSON.stringify(extraCats));
+    localStorage.setItem('vierdes-levs', JSON.stringify(levantamientos));
   }catch(e){ console.warn('localStorage no disponible',e); }
 }
 function loadState() {
@@ -765,6 +931,7 @@ function loadState() {
     const o=localStorage.getItem('vierdes-ops');  if(o) ops=JSON.parse(o);
     const a=localStorage.getItem('vierdes-alms'); if(a) extraAlm=JSON.parse(a);
     const ca=localStorage.getItem('vierdes-cats'); if(ca) extraCats=JSON.parse(ca);
+    const lv=localStorage.getItem('vierdes-levs'); if(lv) levantamientos=JSON.parse(lv);
   }catch(e){ console.warn('Error cargando estado',e); }
 }
 
@@ -832,7 +999,7 @@ function refresh() {
   document.getElementById('tc-inv').textContent=inv.length;
   document.getElementById('tc-op').textContent=ops.length;
   buildDonut(inv); buildAlmBars(inv); buildTopBars(inv); buildEq(inv); buildSSO(inv);
-  buildAlmToolbar(); buildTipoToolbar(inv); renderInv(inv); renderOps();
+  buildAlmToolbar(); buildTipoToolbar(inv); renderInv(inv); renderOps(); renderLevantamientos();
 }
 
 /* ═══════════════ GRÁFICOS ═══════════════ */
@@ -1003,6 +1170,11 @@ function renderOps(){
       btype=`<span class="op-b op-mod">✏ MODIF.</span>`;
       detalle=(op.cambios||[]).map(ch=>`<span style="display:block;font-size:10px;color:var(--text2)">· ${ch.campo}: <span style="color:var(--red)">${escH(String(ch.antes))}</span> → <span style="color:var(--lime)">${escH(String(ch.despues))}</span></span>`).join('')
         +(op.obs?`<span style="display:block;font-size:10px;color:var(--text4);font-style:italic">obs: ${escH(op.obs)}</span>`:'');
+    } else if(op.tipo==='LEVANTAMIENTO'){
+      almCol=`<span class="chip chip-d">${escH(op.almacen)}</span>`;
+      btype=`<span class="op-b op-lev">📋 INVENT.</span>`;
+      const ndif=(op.cambios||[]).length;
+      detalle=`<span style="font-size:10px;color:var(--text2)">${ndif} diferencia(s)${op.ajustado?' · <strong style="color:var(--green2)">ajustado</strong>':' · solo registro'}</span>`;
     } else {
       almCol=`<span class="chip chip-d">${escH(op.almacen)}</span>`;
       btype=`<span class="op-b op-ing">▲ ING.</span>`;
@@ -1029,8 +1201,30 @@ function setOpF(f,btn){
 }
 
 function delOp(id){
+  const op=ops.find(o=>o.id===id);
+  if(!op) return;
   if(!confirm('¿Anular esta operación? El inventario se revertirá.')) return;
+  // Si es un LEVANTAMIENTO ajustado, eliminar también sus ops hijos
+  if(op.tipo==='LEVANTAMIENTO'&&op.ajustado){
+    ops=ops.filter(o=>!(
+      (o.tipo==='MODIFICACION'||o.tipo==='ELIMINACION')&&
+      o.almacen===op.almacen&&
+      o.responsable===op.responsable&&
+      o.fecha===op.fecha&&
+      o.obs==='Ajuste por levantamiento de inventario'
+    ));
+    // Eliminar también de levantamientos[]
+    levantamientos=levantamientos.filter(l=>l.id!==id);
+    saveState(); refresh(); renderLevantamientos();
+    toast('✓ Levantamiento y ajustes anulados');
+    return;
+  }
   ops=ops.filter(o=>o.id!==id);
+  // Si era un levantamiento sin ajuste, limpiar de levantamientos también
+  if(op.tipo==='LEVANTAMIENTO'){
+    levantamientos=levantamientos.filter(l=>l.id!==id);
+    renderLevantamientos();
+  }
   saveState(); refresh(); toast('✓ Operación anulada');
 }
 
@@ -1514,6 +1708,336 @@ function descargarExcel(){
   XLSX.writeFile(wb, `VIERDES_Inventario_${fecha}.xlsx`);
   toast('⬇ Excel descargado');
 }
+
+/* ═══════════════ LEVANTAMIENTO DE INVENTARIO ═══════════════ */
+let levData = []; // filas del conteo en curso
+
+function abrirLevantamiento(){
+  levData=[];
+  document.getElementById('lev-alm').innerHTML='<option value="">— Seleccionar almacén —</option>';
+  getAllAlm().forEach(a=>{
+    const o=document.createElement('option'); o.value=a; o.textContent=a;
+    document.getElementById('lev-alm').appendChild(o);
+  });
+  document.getElementById('lev-resp').value='';
+  document.getElementById('lev-obs').value='';
+  document.getElementById('lev-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('lev-ferr').textContent='';
+  levMostrarPaso(1);
+  document.getElementById('mod-lev').style.display='flex';
+}
+
+function levMostrarPaso(n){
+  [1,2,3].forEach(i=>{
+    const p=document.getElementById('lev-paso'+i);
+    p.style.display= i===n ? (i===1?'block':'flex') : 'none';
+  });
+  // botones footer
+  document.getElementById('lev-btn-p1').style.display  = n===1?'':'none';
+  document.getElementById('lev-btn-p2a').style.display = n===2?'':'none';
+  document.getElementById('lev-btn-p2b').style.display = n===2?'':'none';
+  document.getElementById('lev-btn-p3a').style.display = n===3?'':'none';
+  document.getElementById('lev-btn-p3b').style.display = n===3?'':'none';
+  document.getElementById('lev-btn-p3c').style.display = n===3?'':'none';
+  const labels=['','Paso 1 de 3 — Configurar','Paso 2 de 3 — Conteo físico','Paso 3 de 3 — Diferencias y ajuste'];
+  document.getElementById('lev-step-label').textContent=labels[n];
+}
+
+function levPaso1(){
+  levMostrarPaso(1);
+}
+
+function levPaso2(){
+  const errEl=document.getElementById('lev-ferr');
+  const alm=document.getElementById('lev-alm').value;
+  const resp=document.getElementById('lev-resp').value;
+  if(!alm){errEl.textContent='Selecciona el almacén.';return}
+  if(!resp){errEl.textContent='Selecciona el responsable.';return}
+  errEl.textContent='';
+
+  // Cargar ítems del almacén ordenados alfabéticamente
+  const inv=getInv().filter(d=>d.almacen===alm).sort((a,b)=>a.desc.localeCompare(b.desc,'es'));
+  levData=inv.map(d=>({almacen:d.almacen,tipo:d.tipo,desc:d.desc,sis:d.qty,cont:null,ok:false}));
+
+  document.getElementById('lev-p2-title').textContent='CONTANDO: '+alm;
+  renderLevConteo();
+  levMostrarPaso(2);
+}
+
+function levPaso2Volver(){
+  levMostrarPaso(2);
+}
+
+function renderLevConteo(){
+  const revisados=levData.filter(d=>d.ok||d.cont!==null).length;
+  document.getElementById('lev-p2-prog').textContent=revisados+' / '+levData.length+' ítems revisados';
+  document.getElementById('lev-tbody').innerHTML=levData.map((d,i)=>{
+    const dif=d.cont!==null?d.cont-d.sis:null;
+    const rowCls=d.ok?'lev-ok':(dif!==null?(dif<0?'lev-falt':dif>0?'lev-sob':'lev-ok'):'');
+    const difCell=dif===null?'<span style="color:var(--text4);font-size:10px">—</span>'
+      :dif===0?'<span class="dif-zero">✓ 0</span>'
+      :`<span class="${dif<0?'dif-neg':'dif-pos'}">${dif>0?'+':''}${dif}</span>`;
+    const contVal=d.ok?d.sis:(d.cont!==null?d.cont:'');
+    return `<tr class="${rowCls}">
+      <td class="cm" style="font-size:10px">${String(i+1).padStart(2,'0')}</td>
+      <td style="font-size:11px">${escH(d.desc)}</td>
+      <td style="text-align:center"><span class="tipo-b" style="${getTipoBadge(d.tipo)};font-size:9px">${escH(d.tipo)}</span></td>
+      <td style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:var(--lime)">${d.sis}</td>
+      <td style="text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <input class="lev-inp${d.ok?' ok':''}" type="number" min="0" value="${contVal}"
+            onchange="levSetCont(${i},this.value)"
+            oninput="levSetCont(${i},this.value)"
+            placeholder="cant."
+            ${d.ok?'disabled':''}>
+          <input type="checkbox" class="lev-chk" title="Sin diferencia"
+            ${d.ok?'checked':''}
+            onchange="levToggleOk(${i},this.checked)">
+        </div>
+      </td>
+      <td style="text-align:center">${difCell}</td>
+    </tr>`;
+  }).join('');
+}
+
+function levSetCont(i,val){
+  const n=parseInt(val);
+  levData[i].cont=isNaN(n)||val===''?null:n;
+  levData[i].ok=false;
+  renderLevConteo();
+}
+
+function levToggleOk(i,checked){
+  levData[i].ok=checked;
+  if(checked){ levData[i].cont=levData[i].sis; }
+  else { levData[i].cont=null; }
+  renderLevConteo();
+}
+
+function marcarTodosOk(){
+  levData.forEach(d=>{d.ok=true; d.cont=d.sis;});
+  renderLevConteo();
+}
+
+function levPaso3(){
+  // Verificar que todos fueron revisados
+  const noRevisados=levData.filter(d=>!d.ok&&d.cont===null);
+  if(noRevisados.length>0){
+    if(!confirm(`Quedan ${noRevisados.length} ítem(s) sin revisar. ¿Continuar de todas formas?\n(Los no revisados no generarán diferencia.)`)) return;
+  }
+  document.getElementById('lev-ferr').textContent='';
+
+  // Calcular diferencias
+  const diffs=levData.filter(d=>d.cont!==null&&!d.ok&&d.cont!==d.sis);
+  const iguales=levData.filter(d=>d.ok||(d.cont!==null&&d.cont===d.sis));
+  const sinRevisar=levData.filter(d=>!d.ok&&d.cont===null);
+
+  let html=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+      <div style="background:rgba(82,160,106,.1);border:1px solid rgba(82,160,106,.25);border-radius:7px;padding:13px;text-align:center">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--green2)">${iguales.length}</div>
+        <div style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Sin diferencia</div>
+      </div>
+      <div style="background:rgba(240,101,74,.08);border:1px solid rgba(240,101,74,.2);border-radius:7px;padding:13px;text-align:center">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--red)">${diffs.filter(d=>d.cont<d.sis).length}</div>
+        <div style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Con faltante</div>
+      </div>
+      <div style="background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);border-radius:7px;padding:13px;text-align:center">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--amber)">${diffs.filter(d=>d.cont>d.sis).length}</div>
+        <div style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Con sobrante</div>
+      </div>
+    </div>`;
+
+  if(diffs.length===0){
+    html+=`<div style="background:rgba(82,160,106,.1);border:1px solid rgba(82,160,106,.3);border-radius:7px;padding:20px;text-align:center;color:var(--green2);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px">
+      ✓ INVENTARIO PERFECTO — Sin diferencias detectadas</div>`;
+  } else {
+    html+=`<div class="lev-card">
+      <div class="lev-card-hdr">
+        <span>ÍTEMS CON DIFERENCIA (${diffs.length})</span>
+        <span style="font-size:10px;color:var(--text3);letter-spacing:0;font-weight:400">
+          Al ajustar, el inventario se actualizará automáticamente</span>
+      </div>
+      <div class="lev-card-body">
+        <table class="tbl">
+          <thead><tr><th>Ítem</th><th>Categoría</th><th style="text-align:center">Sistema</th><th style="text-align:center">Físico</th><th style="text-align:center">Diferencia</th></tr></thead>
+          <tbody>${diffs.map(d=>{
+            const dif=d.cont-d.sis;
+            return `<tr class="${dif<0?'lev-falt':'lev-sob'}">
+              <td style="font-size:11px">${escH(d.desc)}</td>
+              <td><span class="tipo-b" style="${getTipoBadge(d.tipo)};font-size:9px">${escH(d.tipo)}</span></td>
+              <td style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:16px;color:var(--text2)">${d.sis}</td>
+              <td style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:${dif<0?'var(--red)':'var(--lime)'}">${d.cont}</td>
+              <td style="text-align:center"><span class="${dif<0?'dif-neg':'dif-pos'}">${dif>0?'+':''}${dif}</span></td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }
+
+  if(sinRevisar.length>0){
+    html+=`<div style="font-size:10px;color:var(--text4);padding:8px;border:1px dashed var(--border);border-radius:5px;margin-top:8px">
+      ⚠ ${sinRevisar.length} ítem(s) no revisados — no generarán ajuste: ${sinRevisar.map(d=>escH(d.desc)).join(', ')}</div>`;
+  }
+
+  document.getElementById('lev-resumen').innerHTML=html;
+  levMostrarPaso(3);
+}
+
+function guardarLev(ajustar){
+  const alm   = document.getElementById('lev-alm').value;
+  const resp  = document.getElementById('lev-resp').value;
+  const fecha = document.getElementById('lev-fecha').value;
+  const obs   = document.getElementById('lev-obs').value.trim();
+
+  const diffs = levData.filter(d=>d.cont!==null&&!d.ok&&d.cont!==d.sis);
+  const snapshot = levData.map(d=>({desc:d.desc,tipo:d.tipo,sis:d.sis,cont:d.cont,ok:d.ok}));
+
+  // Guardar registro del levantamiento
+  const lev={
+    id: Date.now(),
+    fecha: fmtF(fecha),
+    almacen: alm,
+    responsable: resp,
+    obs: obs||null,
+    items: snapshot,
+    diffs: diffs.length,
+    ajustado: ajustar,
+  };
+  levantamientos.unshift(lev);
+
+  // Registrar en ops como LEVANTAMIENTO
+  ops.unshift({
+    id: lev.id,
+    tipo: 'LEVANTAMIENTO',
+    fecha: lev.fecha,
+    guia: null,
+    responsable: resp,
+    almacen: alm,
+    obs: obs||null,
+    cambios: diffs.map(d=>({campo:d.desc,antes:d.sis,despues:d.cont})),
+    ajustado: ajustar,
+  });
+
+  // Si ajustar: aplicar diferencias como MODIFICACION por ítem
+  if(ajustar && diffs.length>0){
+    diffs.forEach(d=>{
+      // Quitar MODIFICACION/ELIMINACION previa para este ítem si existe
+      const prevIdx=ops.findIndex(o=>(o.tipo==='MODIFICACION'||o.tipo==='ELIMINACION')&&o.almacen===alm&&o.descOrig===d.desc);
+      if(prevIdx>=0) ops.splice(prevIdx,1);
+
+      ops.unshift({
+        id: Date.now()+Math.random(),
+        tipo: d.cont===0?'ELIMINACION':'MODIFICACION',
+        fecha: lev.fecha,
+        guia: null,
+        responsable: resp,
+        almacen: alm,
+        descOrig: d.desc,
+        newTipo: null,
+        newDesc: null,
+        qtyDelta: d.cont-d.sis,
+        obs: `Ajuste por levantamiento de inventario`,
+        cambios:[{campo:'Cantidad',antes:d.sis,despues:d.cont}],
+      });
+    });
+  }
+
+  saveState();
+  cerrarModal('mod-lev');
+  refresh();
+  renderLevantamientos();
+  swTab('levantamiento', document.querySelector('.tab[onclick*="levantamiento"]'));
+  toast(ajustar
+    ?`✓ Levantamiento registrado — ${diffs.length} ajuste(s) aplicado(s)`
+    :'📋 Levantamiento registrado sin ajuste');
+}
+
+/* ══ RENDER TAB LEVANTAMIENTO ══ */
+function renderLevantamientos(){
+  document.getElementById('tc-lev').textContent=levantamientos.length||'—';
+  document.getElementById('lev-badge').textContent=levantamientos.length+' REGISTRO'+(levantamientos.length!==1?'S':'');
+  const empty=document.getElementById('lev-empty');
+  const list=document.getElementById('lev-list');
+  if(!levantamientos.length){ empty.style.display='block'; list.innerHTML=''; return; }
+  empty.style.display='none';
+  list.innerHTML=levantamientos.map(lev=>{
+    const diffs=lev.items?lev.items.filter(d=>d.cont!==null&&!d.ok&&d.cont!==d.sis):[];
+    const revisados=lev.items?lev.items.filter(d=>d.ok||(d.cont!==null)).length:0;
+    return `<div class="lev-card">
+      <div class="lev-card-hdr">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="color:var(--amber)">📋 ${escH(lev.almacen)}</span>
+          <span style="font-size:10px;color:var(--text3);letter-spacing:0;font-weight:400">${lev.fecha}</span>
+          <span style="font-size:10px;color:var(--text3);letter-spacing:0;font-weight:400">— ${escH(lev.responsable)}</span>
+          ${lev.obs?`<span style="font-size:10px;color:var(--text4);font-style:italic;letter-spacing:0;font-weight:400">${escH(lev.obs)}</span>`:''}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:10px;color:var(--text3)">${revisados}/${lev.items?lev.items.length:0} revisados</span>
+          ${lev.ajustado
+            ?'<span style="font-size:10px;background:rgba(82,160,106,.15);color:var(--green2);border:1px solid rgba(82,160,106,.3);border-radius:4px;padding:2px 7px">Ajustado</span>'
+            :'<span style="font-size:10px;background:rgba(245,200,66,.1);color:var(--amber);border:1px solid rgba(245,200,66,.25);border-radius:4px;padding:2px 7px">Solo registro</span>'}
+          <button class="btn-anl" onclick="eliminarLev(${lev.id})">✕ ELIMINAR</button>
+        </div>
+      </div>
+      <div class="lev-card-body">
+        <table class="tbl">
+          <thead><tr><th>Ítem</th><th style="text-align:center">Sistema</th><th style="text-align:center">Físico</th><th style="text-align:center">Diferencia</th></tr></thead>
+          <tbody>${(lev.items||[]).map(d=>{
+            const dif=d.cont!==null?d.cont-d.sis:null;
+            const rowCls=dif===null?'':(dif===0||d.ok?'lev-ok':dif<0?'lev-falt':'lev-sob');
+            return `<tr class="${rowCls}">
+              <td style="font-size:11px">${escH(d.desc)}</td>
+              <td style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:15px;color:var(--text2)">${d.sis}</td>
+              <td style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:${dif===null?'var(--text4)':dif===0||d.ok?'var(--green2)':dif<0?'var(--red)':'var(--lime)'}">${dif===null?'—':d.cont}</td>
+              <td style="text-align:center">${dif===null?'<span style="color:var(--text4);font-size:10px">no revisado</span>':dif===0||d.ok?'<span class="dif-zero">✓</span>':`<span class="${dif<0?'dif-neg':'dif-pos'}">${dif>0?'+':''}${dif}</span>`}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function eliminarLev(id){
+  const lev=levantamientos.find(l=>l.id===id);
+  if(!lev) return;
+  const msg=lev.ajustado
+    ?'¿Eliminar este levantamiento?\nATENCIÓN: Se eliminarán también los ajustes de inventario que generó.'
+    :'¿Eliminar este levantamiento del historial?';
+  if(!confirm(msg)) return;
+  // Eliminar el op LEVANTAMIENTO principal
+  ops=ops.filter(o=>o.id!==id);
+  // Si fue ajustado, eliminar también los ops MODIFICACION/ELIMINACION hijos
+  // (tienen obs='Ajuste por levantamiento de inventario' y misma fecha)
+  if(lev.ajustado){
+    ops=ops.filter(o=>!(
+      (o.tipo==='MODIFICACION'||o.tipo==='ELIMINACION')&&
+      o.almacen===lev.almacen&&
+      o.responsable===lev.responsable&&
+      o.fecha===lev.fecha&&
+      o.obs==='Ajuste por levantamiento de inventario'
+    ));
+  }
+  levantamientos=levantamientos.filter(l=>l.id!==id);
+  saveState(); refresh(); renderLevantamientos();
+  toast('🗑 Levantamiento eliminado'+(lev.ajustado?' (ajustes revertidos)':''));
+}
+
+
+/* ═══ DROPDOWN ACCIONES ═══ */
+function togAcciones(){
+  document.getElementById('acc-wrap').classList.toggle('open');
+}
+function cerrarAcciones(){
+  document.getElementById('acc-wrap').classList.remove('open');
+}
+// Cerrar al hacer clic fuera
+document.addEventListener('click',function(e){
+  const w=document.getElementById('acc-wrap');
+  if(w && !w.contains(e.target)) w.classList.remove('open');
+});
 
 /* ═══════════════ TABS ═══════════════ */
 function swTab(id,btn){
