@@ -250,6 +250,8 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 .exc-scroll{max-height:260px;overflow-y:auto}
 .exc-tipo-dot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px;vertical-align:middle}
 
+.top-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+@media(max-width:700px){.top-grid{grid-template-columns:1fr}}
 /* ════ LEVANTAMIENTO ════ */
 .lev-inp{width:72px;text-align:center;background:var(--bg2);border:1.5px solid var(--border);border-radius:4px;padding:6px 4px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;transition:border-color .15s}
 .lev-inp:focus{border-color:var(--amber)}
@@ -395,25 +397,27 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
     <div class="kpi fade-in" style="--accent:var(--red)"><span class="kpi-ico">📋</span><div class="kpi-lbl">Operaciones</div><div class="kpi-val" id="k-ops">0</div><div class="kpi-sub">ingresos + movimientos</div></div>
   </div>
 
-  <div class="g3">
+  <div class="g2">
     <div class="panel"><div class="phdr"><h2>Stock por Categoría</h2><span class="pbadge">UNIDADES</span></div>
       <div class="pbody"><div class="donut-wrap"><svg id="donut-svg" width="130" height="130" viewBox="0 0 130 130" style="flex-shrink:0"></svg><div id="donut-leg" style="flex:1;display:flex;flex-direction:column;gap:7px"></div></div></div>
     </div>
     <div class="panel"><div class="phdr"><h2>Unidades por Almacén</h2><span class="pbadge">STOCK</span></div>
       <div class="pbody"><div class="bars" id="alm-bars"></div></div>
     </div>
-    <div class="panel"><div class="phdr"><h2>Top — Mayor Cantidad</h2><span class="pbadge">RANKING</span></div>
-      <div class="pbody"><div class="bars" id="top-bars"></div></div>
-    </div>
   </div>
 
-  <div class="g2">
-    <div class="panel"><div class="phdr"><h2>Equipos Motorizados</h2><span class="pbadge">MOTORIZADO</span></div>
-      <div class="pbody" style="padding:13px"><div class="eqgrid" id="eq-grid"></div></div>
+  <div class="panel" style="margin-bottom:18px">
+    <div class="phdr"><h2>Equipos Motorizados</h2><span class="pbadge">MOTORIZADO</span></div>
+    <div class="pbody" style="padding:13px"><div class="eqgrid" id="eq-grid"></div></div>
+  </div>
+
+  <div class="panel" style="margin-bottom:18px">
+    <div class="phdr" style="flex-wrap:wrap;gap:8px">
+      <h2>Top por Categoría</h2>
+      <span class="pbadge" id="top-badge">RANKING</span>
+      <div id="top-tabs" style="display:flex;flex-wrap:wrap;gap:5px;margin-left:auto"></div>
     </div>
-    <div class="panel"><div class="phdr"><h2 id="sso-panel-title">Categorías Especiales</h2><span class="pbadge" id="sso-panel-badge">SSO / RRHH</span></div>
-      <div class="pbody" id="sso-panel-body" style="padding:0"></div>
-    </div>
+    <div class="pbody" id="top-body" style="padding:12px 16px"></div>
   </div>
 </div>
 
@@ -998,7 +1002,7 @@ function refresh() {
   document.getElementById('k-ops').textContent=ops.length;
   document.getElementById('tc-inv').textContent=inv.length;
   document.getElementById('tc-op').textContent=ops.length;
-  buildDonut(inv); buildAlmBars(inv); buildTopBars(inv); buildEq(inv); buildSSO(inv);
+  buildDonut(inv); buildAlmBars(inv); buildTopBars(inv); buildEq(inv);
   buildAlmToolbar(); buildTipoToolbar(inv); renderInv(inv); renderOps(); renderLevantamientos();
 }
 
@@ -1040,56 +1044,91 @@ function buildAlmBars(inv){
     <div class="btrack"><div class="bfill" style="width:${q/mx*100}%;--fc:${cl[i%cl.length]}"></div></div></div>`).join('');
 }
 
+let topCatActiva = 'TODOS';
+
 function buildTopBars(inv){
-  const s=[...inv].sort((a,b)=>b.qty-a.qty).slice(0,8),mx=s[0]?.qty||1;
-  document.getElementById('top-bars').innerHTML=s.map(d=>`
-    <div class="brow"><div class="blbl"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;font-size:10px">${d.desc}</span><span class="bqty">${d.qty}</span></div>
-    <div class="btrack"><div class="bfill" style="width:${d.qty/mx*100}%;--fc:${getTipoColor(d.tipo)}"></div></div></div>`).join('');
+  // Reunir todas las categorías presentes
+  const cats = ['TODOS', ...[...new Set(inv.map(d=>d.tipo))].sort()];
+
+  // Render tabs de categoría
+  const tabsEl = document.getElementById('top-tabs');
+  tabsEl.innerHTML = cats.map(cat=>{
+    const active = cat === topCatActiva;
+    const color = cat==='TODOS' ? 'var(--text2)' : getTipoColor(cat);
+    return `<button onclick="setTopCat('${escH(cat)}')" style="
+      font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+      letter-spacing:1.2px;text-transform:uppercase;padding:4px 10px;border-radius:4px;
+      cursor:pointer;transition:all .15s;white-space:nowrap;
+      background:${active?color:'transparent'};
+      color:${active?'#0a180a':color};
+      border:1.5px solid ${color};
+      opacity:${active?1:0.65}
+    ">${escH(cat)}</button>`;
+  }).join('');
+
+  renderTopBars(inv);
+}
+
+function setTopCat(cat){
+  topCatActiva = cat;
+  buildTopBars(getInv());
+}
+
+function renderTopBars(inv){
+  const filtered = topCatActiva==='TODOS' ? inv : inv.filter(d=>d.tipo===topCatActiva);
+  const s = [...filtered].sort((a,b)=>b.qty-a.qty).slice(0,10);
+  const mx = s[0]?.qty || 1;
+  const body = document.getElementById('top-body');
+  document.getElementById('top-badge').textContent = topCatActiva==='TODOS'?'TODOS · TOP 10':escH(topCatActiva)+' · TOP 10';
+
+  if(!s.length){
+    body.innerHTML='<div class="emsg" style="padding:20px">Sin ítems en esta categoría</div>';
+    return;
+  }
+
+  // Distribución en 2 columnas para mejor uso del espacio horizontal
+  const mid = Math.ceil(s.length/2);
+  const col1 = s.slice(0,mid), col2 = s.slice(mid);
+  const renderCol = arr => arr.map(d=>`
+    <div class="brow">
+      <div class="blbl" style="gap:8px">
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;font-size:11px">${escH(d.desc)}</span>
+        <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;min-width:fit-content">
+          ${topCatActiva==='TODOS'?`<span class="tipo-b" style="${getTipoBadge(d.tipo)};font-size:8px;padding:1px 5px">${escH(d.tipo)}</span>`:''}
+          <span class="bqty" style="min-width:28px;text-align:right">${d.qty}</span>
+        </div>
+      </div>
+      <div class="btrack"><div class="bfill" style="width:${Math.max(d.qty/mx*100,4)}%;--fc:${getTipoColor(d.tipo)}"></div></div>
+    </div>`).join('');
+
+  body.innerHTML = `<div class="top-grid">
+    <div>${renderCol(col1)}</div>
+    <div>${renderCol(col2)}</div>
+  </div>`;
 }
 
 function buildEq(inv){
-  const eq=inv.filter(d=>d.tipo==='Equipos');
+  const eq=inv.filter(d=>d.tipo==='Equipos' && d.qty>0);
   const gb=s=>{for(const b of['HUSQVARNA','STIHL','STANLEY','TRUPER','KAWASAKI','GARDENA','GELCO','BAHCO'])if(s.toUpperCase().includes(b))return b;return ''};
-  document.getElementById('eq-grid').innerHTML=eq.map(d=>`
+  const el=document.getElementById('eq-grid');
+  if(!eq.length){el.innerHTML='<div class="emsg" style="padding:20px;grid-column:1/-1">Sin equipos registrados</div>';return;}
+  el.innerHTML=eq.map(d=>`
     <div class="eqcard">
       <div class="eqbrand">${gb(d.desc)||d.almacen}</div>
       <div class="eqname">${d.desc.replace(/HUSQVARNA|STIHL|STANLEY|TRUPER|KAWASAKI/gi,'').replace(/\(.*?\)/g,'').trim()}</div>
-      <div class="eqfoot"><div class="eqloc">${d.almacen}</div><div class="eqqty">${d.qty}</div></div>
+      <div class="eqfoot">
+        <div class="eqloc">📍 ${d.almacen}</div>
+        <div style="display:flex;align-items:baseline;gap:3px">
+          <span class="eqqty">${d.qty}</span>
+          <span style="font-size:9px;color:var(--text4);letter-spacing:1px">UND</span>
+        </div>
+      </div>
     </div>`).join('');
 }
 
 const TIPOS_CORE = new Set(['Herramientas','Insumos','Equipos']);
 
-function buildSSO(inv){
-  // Categorías especiales = todo lo que no es core
-  const especiales=[...new Set(inv.filter(d=>!TIPOS_CORE.has(d.tipo)).map(d=>d.tipo))].sort();
-  const panel=document.getElementById('sso-panel-body');
-  const title=document.getElementById('sso-panel-title');
-  const badge=document.getElementById('sso-panel-badge');
 
-  if(!especiales.length){
-    title.textContent='Categorías Especiales';
-    badge.textContent='—';
-    panel.innerHTML='<div class="emsg" style="padding:28px">Sin categorías especiales</div>';
-    return;
-  }
-
-  title.textContent='Categorías Especiales';
-  badge.textContent=especiales.join(' / ');
-
-  panel.innerHTML=especiales.map(tipo=>{
-    const items=inv.filter(d=>d.tipo===tipo);
-    const mx=Math.max(...items.map(d=>d.qty),1);
-    const color=getTipoColor(tipo);
-    return `<div style="padding:14px 16px;border-bottom:1px solid var(--border)">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:${color};margin-bottom:9px;text-transform:uppercase">${escH(tipo)}</div>
-      <div class="bars">${items.map(d=>`
-        <div class="brow"><div class="blbl"><span>${escH(d.desc)}</span><span class="bqty" style="color:${color}">${d.qty}</span></div>
-        <div class="btrack"><div class="bfill" style="width:${d.qty/mx*100}%;--fc:${color}"></div></div></div>`).join('')}
-      </div>
-    </div>`;
-  }).join('');
-}
 
 /* ═══════════════ TABLA INVENTARIO ═══════════════ */
 function buildAlmToolbar(){
