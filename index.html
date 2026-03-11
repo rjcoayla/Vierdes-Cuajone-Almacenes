@@ -131,6 +131,7 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 .op-b{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
 .op-ing{background:rgba(82,160,106,.14);color:#6abf82;border:1px solid rgba(82,160,106,.28)}
 .op-mod{background:rgba(245,200,66,.12);color:var(--amber);border:1px solid rgba(245,200,66,.25)}
+.op-del{background:rgba(240,101,74,.12);color:var(--red);border:1px solid rgba(240,101,74,.25)}
 .op-tra{background:rgba(106,184,232,.12);color:#6ab8e8;border:1px solid rgba(106,184,232,.22)}
 
 /* ════════════ TOOLBAR ════════════ */
@@ -201,6 +202,8 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 /* botón editar ítem en tabla */
 .btn-dl{margin-left:auto;background:none;border:1.5px solid var(--green2);color:var(--green3);border-radius:5px;padding:5px 12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .16s;white-space:nowrap}
 .btn-dl:hover{background:var(--green2);color:#f0f8ea}
+.btn-del-item{background:none;border:1.5px solid var(--red);color:var(--red);border-radius:5px;padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .16s}
+.btn-del-item:hover{background:var(--red);color:#fff}
 .btn-edit-itm{background:none;border:1px solid var(--border);border-radius:4px;color:var(--text4);cursor:pointer;font-size:11px;padding:3px 7px;transition:all .15s;white-space:nowrap}
 .btn-edit-itm:hover{border-color:var(--amber);color:var(--amber);background:rgba(245,200,66,.08)}
 
@@ -482,7 +485,7 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
       <div class="frow3">
         <div class="ff">
           <label class="flbl">Almacén Origen *</label>
-          <select id="tra-orig" class="fsel" >
+          <select id="tra-orig" class="fsel" onchange="onTraOrigChange()">
             <option value="">— Seleccionar —</option>
           </select>
         </div>
@@ -607,6 +610,7 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
     <div class="mftr">
       <div id="edit-ferr" class="ferr" style="flex:1"></div>
       <button class="btn-cancel" onclick="cerrarModal('mod-edit')">CANCELAR</button>
+      <button class="btn-del-item" onclick="eliminarItem()">🗑 ELIMINAR ÍTEM</button>
       <button class="btn-ok" style="background:var(--amber);color:#1a1000" onclick="saveEdit()">✓ GUARDAR CAMBIOS</button>
     </div>
   </div>
@@ -786,7 +790,7 @@ function getInv() {
         else inv[kd]={almacen:op.destino,tipo:it.tipo,desc:it.desc,qty:it.qty};
       });
 
-    } else if(op.tipo==='MODIFICACION'){
+    } else if(op.tipo==='MODIFICACION'||op.tipo==='ELIMINACION'){
       // descOrig puede haber cambiado por una modificación anterior — buscar desc efectivo
       const descBuscar=op.descOrig;
       const k=op.almacen+'||'+descBuscar;
@@ -989,10 +993,15 @@ function renderOps(){
       almCol=`<span class="chip">${escH(op.origen)}</span> → <span class="chip chip-d">${escH(op.destino)}</span>`;
       btype=`<span class="op-b op-tra">⇄ MOV.</span>`;
       detalle=op.items.map(it=>`<span style="display:block;font-size:10px;color:var(--text2)">· ${escH(it.desc)} <strong style="color:var(--lime)">(${it.qty})</strong></span>`).join('');
+    } else if(op.tipo==='ELIMINACION'){
+      almCol=`<span class="chip chip-d">${escH(op.almacen)}</span>`;
+      btype=`<span class="op-b op-del">🗑 ELIM.</span>`;
+      detalle=`<span style="display:block;font-size:10px;color:var(--red)">· ${escH(op.descOrig)}</span>`
+        +(op.obs?`<span style="display:block;font-size:10px;color:var(--text4);font-style:italic">obs: ${escH(op.obs)}</span>`:'');
     } else if(op.tipo==='MODIFICACION'){
       almCol=`<span class="chip chip-d">${escH(op.almacen)}</span>`;
       btype=`<span class="op-b op-mod">✏ MODIF.</span>`;
-      detalle=op.cambios.map(c=>`<span style="display:block;font-size:10px;color:var(--text2)">· ${c.campo}: <span style="color:var(--red)">${escH(String(c.antes))}</span> → <span style="color:var(--lime)">${escH(String(c.despues))}</span></span>`).join('')
+      detalle=(op.cambios||[]).map(ch=>`<span style="display:block;font-size:10px;color:var(--text2)">· ${ch.campo}: <span style="color:var(--red)">${escH(String(ch.antes))}</span> → <span style="color:var(--lime)">${escH(String(ch.despues))}</span></span>`).join('')
         +(op.obs?`<span style="display:block;font-size:10px;color:var(--text4);font-style:italic">obs: ${escH(op.obs)}</span>`:'');
     } else {
       almCol=`<span class="chip chip-d">${escH(op.almacen)}</span>`;
@@ -1149,11 +1158,18 @@ function tipoOptsBasic(sel='Herramientas'){
   return getTipos().map(t=>`<option value="${t}"${t===sel?' selected':''}>${t}</option>`).join('');
 }
 
-function allDescOptsBasic(selectedDesc=''){
+function allDescOptsBasic(selectedDesc='', almacen=''){
   const inv=getInv();
-  const descs=[...new Set(inv.map(d=>d.desc))].sort();
+  // Si hay almacen de origen, filtrar solo sus ítems con stock
+  const filtrado = almacen
+    ? inv.filter(d=>d.almacen===almacen && d.qty>0).sort((a,b)=>a.desc.localeCompare(b.desc))
+    : [...new Set(inv.map(d=>d.desc))].sort().map(d=>inv.find(x=>x.desc===d));
+  if(!filtrado.length && almacen)
+    return `<option value="">— Sin stock en este almacén —</option>`;
   return `<option value="">— Seleccionar ítem —</option>`+
-    descs.map(d=>`<option value="${escH(d)}"${d===selectedDesc?' selected':''}>${escH(d)}</option>`).join('');
+    filtrado.map(d=>`<option value="${escH(d.desc)}"${d.desc===selectedDesc?' selected':''}>` +
+      `${escH(d.desc)}${almacen?` (${d.qty})`:''}` +
+      `</option>`).join('');
 }
 
 function addTraRow(){
@@ -1164,7 +1180,7 @@ function addTraRow(){
       <select class="exc-sel" style="cursor:pointer">${tipoOptsBasic()}</select>
     </td>
     <td>
-      <select class="exc-sel" onchange="onTraDesc(this)">${allDescOptsBasic()}</select>
+      <select class="exc-sel" onchange="onTraDesc(this)">${allDescOptsBasic('', document.getElementById('tra-orig').value)}</select>
     </td>
     <td>
       <input class="exc-in" type="number" min="1" placeholder="0" style="text-align:right">
@@ -1330,6 +1346,51 @@ function fmtF(iso){
   const d=iso?new Date(iso+'T12:00:00'):new Date();
   return d.toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'})+
          ' '+new Date().toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* ═══ FILTRO ORIGEN TRASLADO ═══ */
+function onTraOrigChange(){
+  const orig=document.getElementById('tra-orig').value;
+  // Actualizar todos los selects de descripción ya en la tabla
+  document.querySelectorAll('#tra-tbody .exc-sel:nth-child(1)').forEach(()=>{});
+  // Re-render cada fila de descripción
+  document.querySelectorAll('#tra-tbody tr').forEach(tr=>{
+    const descSel=tr.cells[1].querySelector('select');
+    const curVal=descSel.value;
+    descSel.innerHTML=allDescOptsBasic(curVal, orig);
+  });
+}
+
+/* ═══════════════ ELIMINAR ÍTEM ═══════════════ */
+function eliminarItem(){
+  const almacen  = document.getElementById('edit-alm-val').value;
+  const descOrig = document.getElementById('edit-desc-orig').value;
+  const qtyCur   = parseInt(document.getElementById('edit-qty-cur').value)||0;
+
+  if(!confirm(`¿Eliminar "${descOrig}" de ${almacen}?\nEsta operación retirará el ítem del inventario y quedará registrada.`)) return;
+
+  const resp = document.getElementById('edit-resp').value;
+  if(!resp){ document.getElementById('edit-ferr').textContent='Selecciona el responsable antes de eliminar.'; return; }
+
+  ops.unshift({
+    id: Date.now(),
+    tipo: 'ELIMINACION',
+    fecha: fmtF(),
+    guia: null,
+    responsable: resp,
+    almacen,
+    descOrig,
+    newTipo: null,
+    newDesc: null,
+    qtyDelta: -qtyCur,   // reduce a 0
+    obs: 'Ítem eliminado del inventario',
+    cambios: [{campo:'Cantidad', antes: qtyCur, despues: 0}],
+  });
+
+  saveState();
+  cerrarModal('mod-edit');
+  refresh();
+  toast('🗑 Ítem eliminado del inventario');
 }
 
 /* ═══════════════ EDICIÓN DE ÍTEMS ═══════════════ */
