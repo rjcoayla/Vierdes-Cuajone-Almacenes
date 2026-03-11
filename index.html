@@ -222,6 +222,9 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 .exc-scroll{max-height:260px;overflow-y:auto}
 .exc-tipo-dot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px;vertical-align:middle}
 
+/* ════ TOAST ════ */
+#toast{position:fixed;bottom:28px;right:28px;background:var(--bg4);border:1.5px solid var(--green2);color:var(--green3);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;padding:11px 20px;border-radius:7px;box-shadow:0 4px 18px rgba(0,0,0,.35);z-index:9999;opacity:0;transform:translateY(10px);transition:opacity .25s,transform .25s;pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}
 /* ════════════ LOCK ════════════ */
 #lk-ov{position:fixed;inset:0;z-index:9999;background:#050a06;display:flex;align-items:center;justify-content:center;transition:opacity .5s ease}
 #lk-ov.out{opacity:0;pointer-events:none}
@@ -606,6 +609,7 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
   <span>Desarrollado por <strong>René J. Coayla Causillas</strong></span>
   <span>10.03.2026</span>
 </footer>
+<div id="toast"></div>
 </div><!-- #app -->
 
 <script>
@@ -1010,7 +1014,7 @@ function setOpF(f,btn){
 function delOp(id){
   if(!confirm('¿Anular esta operación? El inventario se revertirá.')) return;
   ops=ops.filter(o=>o.id!==id);
-  saveState(); refresh();
+  saveState(); refresh(); toast('✓ Operación anulada');
 }
 
 /* ═══════════════ HELPERS ═══════════════ */
@@ -1311,6 +1315,7 @@ function submitOp(tipo){
   saveState();
   cerrarModal(tipo==='ing'?'mod-ing':'mod-tra');
   refresh();
+  toast(tipo==='ing'?'✓ Ingreso registrado':'✓ Movimiento registrado');
 }
 
 function fmtF(iso){
@@ -1411,6 +1416,17 @@ function saveEdit(){
   saveState();
   cerrarModal('mod-edit');
   refresh();
+  toast('✓ Modificación guardada');
+}
+
+/* ═══════════════ TOAST ═══════════════ */
+let _toastTimer=null;
+function toast(msg='✓ Cambios guardados'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  if(_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>el.classList.remove('show'),2400);
 }
 
 /* ═══════════════ DESCARGA EXCEL ═══════════════ */
@@ -1427,6 +1443,7 @@ function descargarExcel(){
   XLSX.utils.book_append_sheet(wb,ws,'Inventario');
   const fecha=new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'-');
   XLSX.writeFile(wb, `VIERDES_Inventario_${fecha}.xlsx`);
+  toast('⬇ Excel descargado');
 }
 
 /* ═══════════════ TABS ═══════════════ */
