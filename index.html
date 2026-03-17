@@ -50,6 +50,10 @@ header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:2px 
 .header-date strong{display:block;color:var(--text3);font-size:15px;letter-spacing:2px}
 
 /* ════════════ BOTONES ACCIÓN ════════════ */
+/* ════ SYNC STATUS ════ */
+#sync-lbl.ok{color:var(--green2)}
+#sync-lbl.err{color:var(--red)}
+#sync-lbl.loading{color:var(--amber)}
 /* ════ ACCIONES DROPDOWN ════ */
 .acc-wrap{position:relative;flex-shrink:0}
 .btn-acc{display:flex;align-items:center;gap:7px;border:2px solid var(--green2);border-radius:6px;padding:8px 16px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;transition:all .2s;white-space:nowrap;background:var(--green2);color:#f0f8ea}
@@ -372,9 +376,10 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
       <div class="tog-track"></div>
       <span id="tlbl">OSCURO</span>
     </button>
-    <div class="header-date">
+    <div class="header-date" style="text-align:right">
       <strong id="hdr-fecha">—</strong>
       ÚLT. OPERACIÓN
+      <div id="sync-status" style="font-size:9px;margin-top:2px;cursor:pointer" onclick="abrirConfigGH()" title="Configurar sincronización">⚙ NUBE: <span id="sync-lbl" style="color:var(--text4)">NO CONFIG.</span></div>
     </div>
   </div>
 </header>
@@ -922,13 +927,17 @@ let ops = [], extraAlm = [], extraCats = [], levantamientos = [];
 let pendIng = [], pendTra = [];
 let fAlm='TODOS', fTipo='TODOS', fOp='TODOS', srch='';
 
-function saveState() {
+function saveStateLocal(){
   try{
     localStorage.setItem('vierdes-ops',  JSON.stringify(ops));
     localStorage.setItem('vierdes-alms', JSON.stringify(extraAlm));
     localStorage.setItem('vierdes-cats', JSON.stringify(extraCats));
     localStorage.setItem('vierdes-levs', JSON.stringify(levantamientos));
   }catch(e){ console.warn('localStorage no disponible',e); }
+}
+function saveState(){
+  saveStateLocal();
+  ghSave(); // guardar en GitHub (async, no bloquea la UI)
 }
 function loadState() {
   try{
@@ -2081,6 +2090,136 @@ document.addEventListener('click',function(e){
   if(w && !w.contains(e.target)) w.classList.remove('open');
 });
 
+/* ═══════════════ GITHUB CLOUD SYNC ═══════════════ */
+const GH_REPO  = 'rjcoayla/Vierdes-Cuajone-Almacenes';
+const GH_FILE  = 'data.json';
+const GH_API   = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`;
+
+let ghToken  = null;
+let ghSha    = null;   // SHA del archivo en GitHub (necesario para actualizar)
+let ghSynced = false;
+
+function ghGetToken(){
+  return localStorage.getItem('vierdes-gh-token') || null;
+}
+
+function ghSetSyncLabel(estado, texto){
+  const lbl = document.getElementById('sync-lbl');
+  if(!lbl) return;
+  lbl.className = estado;
+  lbl.textContent = texto;
+}
+
+function abrirConfigGH(){
+  const t = ghGetToken();
+  document.getElementById('gh-token-in').value = t ? '••••••••••••••••••••' : '';
+  document.getElementById('gh-status').textContent = '';
+  document.getElementById('mod-gh').style.display = 'flex';
+}
+
+async function ghGuardarToken(){
+  const inp = document.getElementById('gh-token-in').value.trim();
+  const statusEl = document.getElementById('gh-status');
+  if(!inp || inp.startsWith('•')){ statusEl.style.color='var(--red)'; statusEl.textContent='Ingresa un token válido.'; return; }
+  statusEl.style.color='var(--amber)'; statusEl.textContent='⏳ Verificando...';
+  // Probar el token haciendo una lectura
+  try{
+    const r = await fetch(GH_API, { headers:{ Authorization:`token ${inp}`, Accept:'application/vnd.github.v3+json' }});
+    if(r.status===200||r.status===404){
+      localStorage.setItem('vierdes-gh-token', inp);
+      statusEl.style.color='var(--green2)'; statusEl.textContent='✓ Token válido. Conectado.';
+      setTimeout(()=>{ document.getElementById('mod-gh').style.display='none'; ghInit(); }, 1200);
+    } else {
+      statusEl.style.color='var(--red)'; statusEl.textContent='✗ Token inválido (error '+r.status+'). Revisa y vuelve a intentarlo.';
+    }
+  } catch(e){
+    statusEl.style.color='var(--red)'; statusEl.textContent='✗ Error de red: '+e.message;
+  }
+}
+
+/* Cargar datos desde GitHub */
+async function ghLoad(){
+  const token = ghGetToken();
+  if(!token) return false;
+  ghSetSyncLabel('loading','CARGANDO...');
+  try{
+    const r = await fetch(GH_API+'?t='+Date.now(), {
+      headers:{ Authorization:`token ${token}`, Accept:'application/vnd.github.v3+json' }
+    });
+    if(r.status===404){
+      // El archivo no existe aún — está bien, lo crearemos al guardar
+      ghSha = null;
+      ghSetSyncLabel('ok','LISTO');
+      return true;
+    }
+    if(!r.ok){ ghSetSyncLabel('err','ERROR '+r.status); return false; }
+    const meta = await r.json();
+    ghSha = meta.sha;
+    const content = JSON.parse(atob(meta.content.replace(/\n/g,'')));
+    // Aplicar datos de la nube
+    if(content.ops)           ops           = content.ops;
+    if(content.extraAlm)      extraAlm      = content.extraAlm;
+    if(content.extraCats)     extraCats     = content.extraCats;
+    if(content.levantamientos) levantamientos = content.levantamientos;
+    // También sincronizar localStorage local
+    saveStateLocal();
+    ghSetSyncLabel('ok','SINCRONIZADO');
+    return true;
+  } catch(e){
+    console.warn('ghLoad error', e);
+    ghSetSyncLabel('err','ERROR');
+    return false;
+  }
+}
+
+/* Guardar datos en GitHub */
+async function ghSave(){
+  const token = ghGetToken();
+  if(!token) return;
+  ghSetSyncLabel('loading','GUARDANDO...');
+  const payload = { ops, extraAlm, extraCats, levantamientos, ts: new Date().toISOString() };
+  const body = { message:'VIERDES: actualización de inventario', content: btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2)))) };
+  if(ghSha) body.sha = ghSha;
+  try{
+    const r = await fetch(GH_API, {
+      method:'PUT',
+      headers:{ Authorization:`token ${token}`, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
+    });
+    if(r.ok){
+      const data = await r.json();
+      ghSha = data.content.sha;
+      ghSetSyncLabel('ok','GUARDADO ✓');
+    } else {
+      const err = await r.json();
+      console.warn('ghSave error', err);
+      // Si es conflict (422), recargar SHA y reintentar
+      if(r.status===409||r.status===422){
+        ghSetSyncLabel('loading','SINCRONIZANDO...');
+        await ghLoad();
+        await ghSave();
+      } else {
+        ghSetSyncLabel('err','ERROR '+r.status);
+      }
+    }
+  } catch(e){
+    console.warn('ghSave error', e);
+    ghSetSyncLabel('err','SIN RED');
+  }
+}
+
+/* Inicializar: cargar de GitHub si hay token, si no usar localStorage */
+async function ghInit(){
+  const token = ghGetToken();
+  if(!token){
+    ghSetSyncLabel('err','NO CONFIG.');
+    return;
+  }
+  const ok = await ghLoad();
+  if(ok) refresh();
+}
+
+
 /* ═══════════════ TABS ═══════════════ */
 function swTab(id,btn){
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
@@ -2123,7 +2262,11 @@ function togEye(){
 window.addEventListener('DOMContentLoaded',()=>document.getElementById('lk-in').focus());
 
 /* ═══════════════ INIT ═══════════════ */
-function init(){ loadState(); refresh(); }
+function init(){
+  loadState();   // carga inmediata desde localStorage
+  refresh();     // renderiza con datos locales
+  ghInit();      // luego sincroniza con GitHub (async)
+}
 init();
 
 /* ═══════ APPLE TOUCH ICON (genera PNG con canvas) ═══════ */
