@@ -795,6 +795,33 @@ footer strong{color:var(--lime);font-family:'Barlow Condensed',sans-serif;font-s
   </div>
 </div>
 
+<!-- ═══════ MODAL CONFIG GITHUB ═══════ -->
+<div id="mod-gh" class="overlay" style="display:none">
+  <div class="modal" style="max-width:480px">
+    <div class="mhdr">
+      <div>
+        <div class="mtitle" style="color:var(--lime)">☁ SINCRONIZACIÓN EN LA NUBE</div>
+        <div class="msub">Configurar conexión con GitHub</div>
+      </div>
+      <button class="mclose" onclick="document.getElementById('mod-gh').style.display='none'">✕</button>
+    </div>
+    <div class="mbody">
+      <div style="background:rgba(212,240,87,.07);border:1px solid rgba(212,240,87,.2);border-radius:6px;padding:13px 15px;font-size:11px;color:var(--text2);line-height:1.8;margin-bottom:16px">
+        🔒 Tu token se guarda <strong>solo en este dispositivo</strong>. Nunca aparece en el código publicado. Cada dispositivo del equipo debe configurarlo una vez.
+      </div>
+      <div class="ff">
+        <label class="flbl">Token de GitHub <small>(ghp_...)</small></label>
+        <input id="gh-token-in" class="fi" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+      </div>
+      <div id="gh-status" style="margin-top:10px;font-size:11px;min-height:18px"></div>
+    </div>
+    <div class="mftr">
+      <button class="btn-cancel" onclick="document.getElementById('mod-gh').style.display='none'">CANCELAR</button>
+      <button class="btn-ok" style="background:var(--lime);color:#0a180a" onclick="ghGuardarToken()">✓ GUARDAR Y CONECTAR</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 </div><!-- #app -->
 
