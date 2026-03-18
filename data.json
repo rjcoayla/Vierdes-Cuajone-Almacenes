@@ -1,6 +1,26 @@
 {
   "ops": [
     {
+      "id": 1773792564808,
+      "tipo": "MODIFICACION",
+      "fecha": "17/03/2026 07:09 p. m.",
+      "guia": null,
+      "responsable": "René Coayla",
+      "almacen": "Caballeriza Almacén General",
+      "descOrig": "Orejeras p/ casco",
+      "newTipo": "EPP",
+      "newDesc": null,
+      "qtyDelta": 0,
+      "obs": null,
+      "cambios": [
+        {
+          "campo": "Categoría",
+          "antes": "Herramientas",
+          "despues": "EPP"
+        }
+      ]
+    },
+    {
       "id": 1773792555905,
       "tipo": "MODIFICACION",
       "fecha": "17/03/2026 07:09 p. m.",
@@ -46,5 +66,5 @@
     "EPP"
   ],
   "levantamientos": [],
-  "ts": "2026-03-18T00:09:15.907Z"
+  "ts": "2026-03-18T00:09:24.810Z"
 }
